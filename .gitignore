@@ -3,9 +3,10 @@
 # General
 .DS_Store
 
-# Frontend (Create React App)
+# Frontend
 /frontend/node_modules
-/frontend/build
+/frontend/dist
+/frontend/dist-ssr
 /frontend/coverage
 /frontend/.pnp
 /frontend/.pnp.js
@@ -18,6 +19,19 @@
 /frontend/npm-debug.log*
 /frontend/yarn-debug.log*
 /frontend/yarn-error.log*
+/frontend/pnpm-debug.log*
+/frontend/lerna-debug.log*
+
+# Editor directories and files
+/frontend/.vscode/*
+!/frontend/.vscode/extensions.json
+/frontend/.idea
+/frontend/*.suo
+/frontend/*.ntvs*
+/frontend/*.njsproj
+/frontend/*.sln
+/frontend/*.sw?
+
 
 # Backend (Python)
 /backend/__pycache__/
