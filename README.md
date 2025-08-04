@@ -4,16 +4,18 @@ This is a single-page application for a handyman business. It allows users to sc
 
 ## Getting Started
 
+Developers can add necessary folders and files as needed. (ex. utils folder for the backend)
+
 ### Frontend
 
-The frontend is a React application.
+The frontend is a React application run with Vite.
 
 | Command       | Description                       |
 | ------------- | --------------------------------- |
 | `npm install` | Installs all dependencies.        |
-| `npm start`   | Runs the app in development mode. |
+| `npm run dev` | Runs the app in development mode. |
 
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Open [http://localhost:5173](http://localhost:5173) to view it in your browser. (Vite's default)
 
 ### Backend
 
