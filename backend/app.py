@@ -8,7 +8,7 @@ from core.models import Service
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from utils.workiz import create_workiz_job
+import utils.workiz as workiz_utils
 
 app = Flask(__name__)
 CORS(app)  # Allow cross-origin requests
@@ -16,7 +16,8 @@ CORS(app)  # Allow cross-origin requests
 @app.route('/api/schedule', methods=['POST'])
 def schedule_service():
     data = request.json
-    response = create_workiz_job(data)
+    response = workiz_utils.HandleScheduleRequest(data)
+
     if response.get("success"):
         return jsonify({"message": "Job scheduled successfully"}), 201
     else:
