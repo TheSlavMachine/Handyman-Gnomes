@@ -4,19 +4,21 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "handyman_orm.settings")
 django.setup()
 
-from core.models import Service
+import core.models as CoreModels
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import utils.workiz as workiz_utils
+import utils.workiz as WorkizUtils
 
 app = Flask(__name__)
 CORS(app)  # Allow cross-origin requests
 
+# I will create the README.md file later after more discussion with Erofey and Neil.
+
 @app.route('/api/schedule', methods=['POST'])
 def schedule_service():
     data = request.json
-    response = workiz_utils.HandleScheduleRequest(data)
+    response = WorkizUtils.HandleScheduleRequest(data)
 
     if response.get("success"):
         return jsonify({"message": "Job scheduled successfully"}), 201
@@ -25,8 +27,15 @@ def schedule_service():
     
 @app.route("/services", methods=["GET"])
 def get_services():
-    services = list(Service.objects.all().values())
+    services = list(CoreModels.Service.objects.all().values())
     return jsonify(services)
+
+@app.route("/team", methods=["GET"])
+def get_team():
+    team = list(CoreModels.TeamMember.objects.all().values())
+    return jsonify(team)
+
+# I didn't add the blog post endpoint since Erofey mentioned that it's not needed for now.
 
 if __name__ == '__main__':
     app.run(debug=True)
