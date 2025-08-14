@@ -26,7 +26,7 @@ with open(APPLIANCES_FILE, "r") as f:
 @app.route('/api/intake', methods=['POST'])
 def intake_request():
     data = request.json
-    required_fields = ["appliance",  "problem", "name", "phone", "address", "time_window"]
+    required_fields = ["appliance", "problem", "name", "phone", "address", "time_window"]
     missing_fields = [f for f in required_fields if not data.get(f)]
 
     if missing_fields: 
