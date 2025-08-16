@@ -1,18 +1,91 @@
+import os 
+import django 
+import json
+import uuid
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "handyman_orm.settings")
+django.setup()
+
+from django.utils import timezone
+from intake_email import send_handyman_email, send_customer_confirmation
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from utils.workiz import create_workiz_job
+from core import models
 
 app = Flask(__name__)
 CORS(app)  # Allow cross-origin requests
 
-@app.route('/api/schedule', methods=['POST'])
-def schedule_service():
+# I will create the README.md file later after more discussion with Erofey and Neil.
+
+APPLIANCES_FILE = "info_jsons/appliances.json"
+
+with open(APPLIANCES_FILE, "r") as f:
+    APPLIANCES = json.load(f)
+
+@app.route('/api/intake', methods=['POST'])
+def intake_request():
     data = request.json
-    response = create_workiz_job(data)
-    if response.get("success"):
-        return jsonify({"message": "Job scheduled successfully"}), 201
-    else:
-        return jsonify({"error": "Scheduling failed"}), 400
+    required_fields = ["appliance", "problem", "name", "phone", "address", "time_window"]
+    missing_fields = [f for f in required_fields if not data.get(f)]
+
+    if missing_fields: 
+        return jsonify({"error": f"Missing required fields: {', '.join(missing_fields)}"}), 400
+    
+    ticket_id = str(uuid.uuid4())
+
+    try:
+        models.IntakeLog.objects.create(
+            ticket_id=ticket_id,
+            appliance=data["appliance"],
+            problem=data["problem"],
+            problem_other=data.get("problem_other", ""),
+            name=data["name"],
+            phone=data["phone"],
+            address=data["address"],
+            time_window=data["time_window"],
+            serial_number=data.get("serial_number", ""),
+            description=data.get("description", ""),
+            notes=data.get("notes", ""),
+            status="NEW",
+            created_at=timezone.now()
+        )
+
+        send_handyman_email(data)
+        send_customer_confirmation(data)
+
+        return jsonify({"message": "Job scheduled successfully", "ticket_id": ticket_id}), 201
+    except Exception as e:
+        print(f"Intake submission failed: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+    
+@app.route("/api/appliances", methods=["GET"])
+def get_appliances():
+    appliances_no_problems = [
+        {k: v for k, v in appliance.items() if k != "problems"}
+        for appliance in APPLIANCES
+    ]
+    return jsonify(appliances_no_problems)
+
+@app.route("/api/problems", methods=["GET"])
+def get_appliance_problems():
+    appliance_name = request.args.get("appliance")
+
+    if not appliance_name:
+        return jsonify({"error": "Missing 'appliance' query parameter"}), 400
+
+    for appliance in APPLIANCES:
+        if appliance["name"].lower() == appliance_name.lower():
+            problems_with_other = appliance["problems"] + [{"name": "Other"}]
+            return jsonify(problems_with_other)
+
+    return jsonify({"error": "Appliance not found"}), 404
+
+@app.route("/api/time-windows", methods=["GET"])
+def get_time_windows():
+    time_windows = [choice[0] for choice in models.IntakeLog.TWIN_CHOICES]
+
+    return jsonify(time_windows)
 
 if __name__ == '__main__':
     app.run(debug=True)
