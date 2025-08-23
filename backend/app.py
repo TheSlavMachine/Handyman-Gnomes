@@ -26,11 +26,22 @@ with open(APPLIANCES_FILE, "r") as f:
 @app.route('/api/intake', methods=['POST'])
 def intake_request():
     data = request.json
-    required_fields = ["appliance", "problem", "name", "phone", "address", "time_window"]
+    required_fields = ["appliance", "problem", "name", "phone", "address", "time_window", "appointment_date"]
     missing_fields = [f for f in required_fields if not data.get(f)]
 
     if missing_fields: 
         return jsonify({"error": f"Missing required fields: {', '.join(missing_fields)}"}), 400
+    
+    appointment_date = data["appointment_date"]
+    slot = data["time_window"]
+
+    existing_count = models.IntakeLog.objects.filter(
+        appointment_date=appointment_date,
+        time_window=slot
+    ).count()
+
+    if slot in ["Morning", "Afternoon"] and existing_count >= 5:
+        return jsonify({"error": f"{slot} slots are full for {appointment_date}"}), 400
     
     ticket_id = str(uuid.uuid4())
 

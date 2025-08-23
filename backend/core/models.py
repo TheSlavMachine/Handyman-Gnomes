@@ -16,6 +16,7 @@ class IntakeLog(models.Model):
     phone = models.CharField(max_length=32)
     address = models.CharField(max_length=255)
     time_window = models.CharField(max_length=16, choices=TWIN_CHOICES)
+    appointment_date = models.DateField()
     serial_number = models.CharField(max_length=64, blank=True)
     description = models.TextField(blank=True)
     notes = models.TextField(blank=True)
