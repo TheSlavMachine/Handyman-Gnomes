@@ -7,7 +7,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "handyman_orm.settings")
 django.setup()
 
 from django.utils import timezone
-from intake_email import send_handyman_email, send_customer_confirmation
+from intake_email import send_handyman_email, send_customer_confirmation, send_customer_appointment_time
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -22,6 +22,30 @@ APPLIANCES_FILE = "info_jsons/appliances.json"
 
 with open(APPLIANCES_FILE, "r") as f:
     APPLIANCES = json.load(f)
+
+@app.route('/api/appointment-action', methods=['GET'])
+def appointment_action():
+    try:
+        ticket_id = request.args.get('ticket_id')
+        action = request.args.get('action')
+        selected_time = request.args.get('time') 
+
+        if not ticket_id or not action or not selected_time:
+            return jsonify({"error": "Missing ticket_id, action, or time"}), 400
+
+        payload = {
+            "ticket_id": ticket_id,
+            "name": "Customer Name",        
+            "email": "customer@example.com",  
+            "selected_time": selected_time
+        }
+
+        send_customer_appointment_time(payload)
+
+        return f"Time '{selected_time}' recorded for ticket {ticket_id}. Customer notified."
+    except Exception as e:
+        print(f"Appointment action request failed: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 
 @app.route('/api/intake', methods=['POST'])
 def intake_request():
