@@ -33,6 +33,18 @@ function getNextPage() {
     if (pageState == 0) {
         pageList = getAllPages();
     }
+    if (pageList.length == 0) {
+        return
+    }
+    if (pageState > 0) {
+        if (verifyPage(pageList[pageState].id) == false) {
+            document.querySelector(`form .FormContents #${pageList[pageState].id}.alert`).style.display="block"
+            return 
+        }
+        else {
+            document.querySelector(`form .FormContents #${pageList[pageState].id}.alert`).style.display="none"
+        }
+    }
     //Makes the visibility of the current page we're on to none when next button is clicked
     //Makes visibility of the next button of the current page to none
     pageList[pageState].classList.remove("active");
@@ -79,6 +91,18 @@ function getPreviousPage() {
         nextButtons[pageState].style.display = "block";
     }
 }
+function verifyPage(curPage) {
+    let curList = Array.from(document.querySelectorAll(`#${curPage} .TypeItem`))
+    let optionsList = Array.from(document.querySelectorAll(`#${curPage} .OptionItem`))
+
+    let typeSelectList = curList.some(el => el.checked)
+    let optionSelectList = optionsList.some(el => el.checked)
+    if(!typeSelectList || !optionSelectList) {
+        return false;
+    }
+    return true;
+}
+
 function getAllPages() {
     document.querySelector("form .alert").style.display="none"
     let checkList = Array.from(document.querySelectorAll("form .FormContents .ApplianceItem"))
@@ -99,5 +123,4 @@ function getAllPages() {
     }
     listOfPages.push(document.querySelector("form .FormContents #account-page"))
     return listOfPages;
-    
 }
