@@ -76,7 +76,7 @@ def intake_request():
     try:
         models.IntakeLog.objects.create(
             ticket_id=ticket_id,
-            appliance=appliances_list,
+            appliances=appliances_list,
             problem=data["problem"],
             problem_other=data.get("problem_other", ""),
             name=data["name"],
