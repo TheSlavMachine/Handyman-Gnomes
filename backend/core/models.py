@@ -1,11 +1,5 @@
 from django.db import models
 
-class Appliance(models.Model):
-    name = models.CharField(max_length=64)
-
-    def __str__(self):
-        return self.name
-
 class IntakeLog(models.Model):
     TWIN_CHOICES = [
         ("Morning", "Morning"),
@@ -15,7 +9,7 @@ class IntakeLog(models.Model):
     ]
 
     ticket_id = models.CharField(max_length=16, unique=True, db_index=True)
-    appliances = models.ManyToManyField(Appliance, related_name="intake_logs")
+    appliances = models.JSONField(default=list)
     problem = models.CharField(max_length=64)
     problem_other = models.CharField(max_length=120, blank=True)
     name = models.CharField(max_length=120)
@@ -33,6 +27,3 @@ class IntakeLog(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
-
-    def __str__(self):
-        return f"Ticket {self.ticket_id}"
