@@ -24,6 +24,9 @@ def send_handyman_email(payload):
         time_window = payload.get('time_window', 'Morning') 
         available_slots = TIME_SLOTS.get(time_window, [])
 
+        appliances_list = payload.get('appliances', [])
+        appliances_str = ", ".join(html.escape(a) for a in appliances_list)
+
         time_slots_html = ""
         for slot in available_slots:
             url = f"{reachout_url_base}{html.escape(slot)}"
@@ -38,7 +41,7 @@ def send_handyman_email(payload):
         <table border="1" cellpadding="5">
             <tr><th>Field</th><th>Value</th></tr>
             <tr><td>Ticket ID</td><td>{html.escape(payload['ticket_id'])}</td></tr>
-            <tr><td>Appliance</td><td>{html.escape(payload['appliance'])}</td></tr>
+            <tr><td>Appliances</td><td>{appliances_str}</td></tr>
             <tr><td>Problem</td><td>{html.escape(payload['problem'])}</td></tr>
             <tr><td>Problem Other</td><td>{html.escape(payload.get('problem_other', ''))}</td></tr>
             <tr><td>Name</td><td>{html.escape(payload['name'])}</td></tr>

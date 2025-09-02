@@ -1,5 +1,11 @@
 from django.db import models
 
+class Appliance(models.Model):
+    name = models.CharField(max_length=64, unique=True)
+
+    def __str__(self):
+        return self.name
+
 class IntakeLog(models.Model):
     TWIN_CHOICES = [
         ("Morning", "Morning"),
@@ -9,7 +15,7 @@ class IntakeLog(models.Model):
     ]
 
     ticket_id = models.CharField(max_length=16, unique=True, db_index=True)
-    appliances = models.JSONField(default=list)
+    appliances = models.ManyToManyField(Appliance, related_name="intake_logs")
     problem = models.CharField(max_length=64)
     problem_other = models.CharField(max_length=120, blank=True)
     name = models.CharField(max_length=120)

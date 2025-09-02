@@ -56,9 +56,13 @@ def intake_request():
     if missing_fields: 
         return jsonify({"error": f"Missing required fields: {', '.join(missing_fields)}"}), 400
     
-    appliances_list = data.get("appliances")
-    if not isinstance(appliances_list, list):
+    if not isinstance(data["appliances"], list):
         return jsonify({"error": "appliances must be a list"}), 400
+    
+    appliance_objs = []
+    for appliance_name in data["appliances"]:
+        appliance, _ = models.Appliance.objects.get_or_create(name=appliance_name)
+        appliance_objs.append(appliance)
     
     appointment_date = data["appointment_date"]
     slot = data["time_window"]
@@ -74,9 +78,8 @@ def intake_request():
     ticket_id = str(uuid.uuid4())
 
     try:
-        models.IntakeLog.objects.create(
+        intake_log = models.IntakeLog.objects.create(
             ticket_id=ticket_id,
-            appliances=appliances_list,
             problem=data["problem"],
             problem_other=data.get("problem_other", ""),
             name=data["name"],
@@ -87,8 +90,9 @@ def intake_request():
             description=data.get("description", ""),
             notes=data.get("notes", ""),
             status="NEW",
-            created_at=timezone.now()
         )
+
+        intake_log.appliances.add(*appliance_objs)
 
         send_handyman_email(data)
         send_customer_confirmation(data)
