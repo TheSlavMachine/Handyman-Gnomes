@@ -50,11 +50,15 @@ def appointment_action():
 @app.route('/api/intake', methods=['POST'])
 def intake_request():
     data = request.json
-    required_fields = ["appliance", "problem", "name", "phone", "address", "time_window", "appointment_date"]
+    required_fields = ["appliances", "problem", "name", "phone", "address", "time_window", "appointment_date"]
     missing_fields = [f for f in required_fields if not data.get(f)]
 
     if missing_fields: 
         return jsonify({"error": f"Missing required fields: {', '.join(missing_fields)}"}), 400
+    
+    appliances_list = data.get("appliances")
+    if not isinstance(appliances_list, list):
+        return jsonify({"error": "appliances must be a list"}), 400
     
     appointment_date = data["appointment_date"]
     slot = data["time_window"]
@@ -72,7 +76,7 @@ def intake_request():
     try:
         models.IntakeLog.objects.create(
             ticket_id=ticket_id,
-            appliance=data["appliance"],
+            appliance=appliances_list,
             problem=data["problem"],
             problem_other=data.get("problem_other", ""),
             name=data["name"],
