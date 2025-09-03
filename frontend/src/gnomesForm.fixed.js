@@ -120,7 +120,6 @@ function getPreviousPage() {
 function handleSubmit() {
   const payload = {
     appliances: Array.from(contentsEl.querySelectorAll(".ApplianceItem:checked")).map((el) => el.value),
-    selections: {},
     account: {
       name: contentsEl.querySelector('#account-name')?.value?.trim() || "",
       email: contentsEl.querySelector('#account-email')?.value?.trim() || "",
@@ -138,7 +137,13 @@ function handleSubmit() {
     if (!pageList.find((p) => p.id === pageId)) continue; // not in flow
     const types = Array.from(contentsEl.querySelectorAll(`#${pageId} .TypeItem:checked`)).map((el) => el.value);
     const brands = Array.from(contentsEl.querySelectorAll(`#${pageId} .OptionItem:checked`)).map((el) => el.value);
-    payload.selections[label] = { types, brands };
+    const applianceStrIndex = payload.appliances.indexOf(label)
+    for (const curType of types) {
+      payload.appliances[applianceStrIndex] += "\\" + curType
+    }
+    for (const curBrand of brands) {
+      payload.appliances[applianceStrIndex] += "\\" + curBrand
+    }
   }
 
   // Very light validation for account info
