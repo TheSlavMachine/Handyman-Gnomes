@@ -154,6 +154,23 @@ function handleSubmit() {
   }
 
   console.log("Handyman request:", payload);
+  const requestContent = {
+    method: 'POST',
+    header: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload)
+  };
+  fetch('/api/intake', requestContent)
+    .then(response=> {
+      if(!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.text()
+    })
+    .catch(error => {
+    console.error('Error during fetch operation:', error);
+  });
   
   jsonOutputEl.textContent = JSON.stringify(payload, null, 2);
   resultContainerEl.style.display = "block";
