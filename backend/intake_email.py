@@ -9,6 +9,8 @@ resend.api_key = os.environ.get("RESEND_API_KEY")
 
 logger = logging.getLogger(__name__)
 
+HANDYMAN_EMAIL = os.environ.get("HANDYMAN_EMAIL", "handyman@example.com")
+
 def send_handyman_email(payload):
     try:
         subject = f"New Job Request: {payload['ticket_id']}"
@@ -32,7 +34,7 @@ def send_handyman_email(payload):
 
         resend.Emails.send({
             "from": "Handyman Gnomes <onboarding@resend.dev>",
-            "to": [payload['email']],
+            "to": [HANDYMAN_EMAIL],
             "subject": subject,
             "html": html_content,
             "reply_to": [payload['email']],

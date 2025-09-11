@@ -18,7 +18,8 @@ CORS(app)  # Allow cross-origin requests
 
 # I will create the README.md file later after more discussion with Erofey and Neil.
 
-APPLIANCES_FILE = "info_jsons/appliances.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+APPLIANCES_FILE = os.path.join(BASE_DIR, "info_jsons", "appliances.json")
 
 with open(APPLIANCES_FILE, "r") as f:
     APPLIANCES = json.load(f)
@@ -26,7 +27,7 @@ with open(APPLIANCES_FILE, "r") as f:
 @app.route('/api/intake', methods=['POST'])
 def intake_request():
     data = request.json
-    required_fields = ["appliance", "problem", "name", "phone", "address", "time_window", "appointment_date"]
+    required_fields = ["appliance", "problem", "name", "email", "phone", "address", "time_window", "appointment_date"]
     missing_fields = [f for f in required_fields if not data.get(f)]
 
     if missing_fields: 
@@ -43,7 +44,7 @@ def intake_request():
     if slot in ["Morning", "Afternoon"] and existing_count >= 5:
         return jsonify({"error": f"{slot} slots are full for {appointment_date}"}), 400
     
-    ticket_id = str(uuid.uuid4())
+    ticket_id = uuid.uuid4().hex[:16]
 
     try:
         models.IntakeLog.objects.create(
@@ -55,15 +56,16 @@ def intake_request():
             phone=data["phone"],
             address=data["address"],
             time_window=data["time_window"],
+            appointment_date=appointment_date,
             serial_number=data.get("serial_number", ""),
             description=data.get("description", ""),
             notes=data.get("notes", ""),
             status="NEW",
-            created_at=timezone.now()
         )
 
-        send_handyman_email(data)
-        send_customer_confirmation(data)
+        email_payload = {**data, "ticket_id": ticket_id}
+        send_handyman_email(email_payload)
+        send_customer_confirmation(email_payload)
 
         return jsonify({"message": "Job scheduled successfully", "ticket_id": ticket_id}), 201
     except Exception as e:
@@ -99,4 +101,4 @@ def get_time_windows():
     return jsonify(time_windows)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="127.0.0.1", port=5000, debug=True, use_reloader=False)
