@@ -1,5 +1,8 @@
+# backend/core/models.py
+
 from django.db import models
 
+# 1. We re-introduce this model to hold our list of appliances.
 class Appliance(models.Model):
     name = models.CharField(max_length=64, unique=True)
 
@@ -10,12 +13,18 @@ class IntakeLog(models.Model):
     TWIN_CHOICES = [
         ("Morning", "Morning"),
         ("Afternoon", "Afternoon"),
-        ("Evening", "Evening"),
-        ("Flexible", "Flexible"),
     ]
 
-    ticket_id = models.CharField(max_length=16, unique=True, db_index=True)
+    ticket_id = models.CharField(max_length=36, unique=True, db_index=True)
+    
+    # 2. This is now a ManyToManyField to allow selecting multiple appliances.
     appliances = models.ManyToManyField(Appliance, related_name="intake_logs")
+    
+    # --- NEW FIELDS REQUIRED BY THE WORKFLOW ---
+    brand = models.CharField(max_length=120)
+    under_warranty = models.BooleanField(default=False)
+    # --- END OF NEW FIELDS ---
+    
     problem = models.CharField(max_length=64)
     problem_other = models.CharField(max_length=120, blank=True)
     name = models.CharField(max_length=120)
@@ -26,7 +35,7 @@ class IntakeLog(models.Model):
     serial_number = models.CharField(max_length=64, blank=True)
     description = models.TextField(blank=True)
     notes = models.TextField(blank=True)
-    status = models.CharField(max_length=16, default="NEW")  # NEW / CONTACTED / CLOSED
+    status = models.CharField(max_length=16, default="NEW")
     created_at = models.DateTimeField(auto_now_add=True)
     ip = models.GenericIPAddressField(null=True, blank=True)
     user_agent = models.TextField(blank=True)
