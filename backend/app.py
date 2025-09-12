@@ -105,19 +105,52 @@ def intake_request():
     
 @app.route("/api/appliances", methods=["GET"])
 def get_appliances():
-    # ... (code is unchanged)
-    
+    appliances_no_problems = [
+        {k: v for k, v in appliance.items() if k != "problems"}
+        for appliance in APPLIANCES
+    ]
+    return jsonify(appliances_no_problems)
+
 @app.route("/api/problems", methods=["GET"])
 def get_appliance_problems():
-    # ... (code is unchanged)
+    appliance_name = request.args.get("appliance")
+
+    if not appliance_name:
+        return jsonify({"error": "Missing 'appliance' query parameter"}), 400
+
+    for appliance in APPLIANCES:
+        if appliance["name"].lower() == appliance_name.lower():
+            problems_with_other = appliance["problems"] + [{"name": "Other"}]
+            return jsonify(problems_with_other)
+
+    return jsonify({"error": "Appliance not found"}), 404
 
 @app.route("/api/time-windows", methods=["GET"])
 def get_time_windows():
-    # ... (code is unchanged)
+    time_windows = [choice[0] for choice in models.IntakeLog.TWIN_CHOICES]
 
+    return jsonify(time_windows)
+
+# --- 2. ADDED THIS NEW ROUTE ---
 @app.route('/api/reverse-geocode', methods=['GET'])
 def reverse_geocode():
-    # ... (code is unchanged)
+    lat = request.args.get('lat')
+    lon = request.args.get('lon')
+
+    if not lat or not lon:
+        return jsonify({"error": "Missing latitude or longitude"}), 400
+
+    osm_url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}"
+    
+    try:
+        headers = {'User-Agent': 'HandymanScheduler/1.0'}
+        response = requests.get(osm_url, headers=headers)
+        response.raise_for_status()
+        return jsonify(response.json())
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to fetch from OpenStreetMap: {e}")
+        return jsonify({"error": "Failed to fetch address data"}), 502
+# --- END OF NEW ROUTE ---
 
 if __name__ == '__main__':
     app.run(host="127.0.0.1", port=5000, debug=True, use_reloader=False)
