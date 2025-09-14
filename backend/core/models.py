@@ -17,17 +17,16 @@ class IntakeLog(models.Model):
 
     ticket_id = models.CharField(max_length=36, unique=True, db_index=True)
     
-    # 2. This is now a ManyToManyField to allow selecting multiple appliances.
+
     appliances = models.ManyToManyField(Appliance, related_name="intake_logs")
     
-    # --- NEW FIELDS REQUIRED BY THE WORKFLOW ---
     brand = models.CharField(max_length=120)
     under_warranty = models.BooleanField(default=False)
-    # --- END OF NEW FIELDS ---
     
     problem = models.CharField(max_length=64)
     problem_other = models.CharField(max_length=120, blank=True)
     name = models.CharField(max_length=120)
+    email = models.EmailField()
     phone = models.CharField(max_length=32)
     address = models.CharField(max_length=255)
     time_window = models.CharField(max_length=16, choices=TWIN_CHOICES)

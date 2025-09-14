@@ -69,9 +69,9 @@ export default function Step1_ZipCode({ formData, setFormData, nextStep, validat
   };
 
   return (
-    <div className="grid gap-4 py-4">
+    <div className="grid gap-4 py-0">
       <div className="space-y-6">
-        <div className="space-y-2">
+        <div className="space-y-1">
           <h3 className="font-semibold text-lg">Step 1: Verify Service Area</h3>
           <p className="text-sm text-gray-600">Enter your ZIP code or use your current location.</p>
         </div>

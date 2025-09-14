@@ -25,6 +25,7 @@ export const validationSchemas = {
   }),
   step4: z.object({
     name: z.string().min(2, { message: "Name must be at least 2 characters." }).regex(/^[a-zA-Z\s'-]+$/, { message: "Name contains invalid characters." }),
+    email: z.string().email({ message: "Please enter a valid email address." }),
     phone: z.string()
       .min(7, { message: "Please enter a valid phone number." })
       .regex(/^[0-9\s()+-]+$/, { message: "Phone number can only contain numbers." }),
@@ -46,6 +47,7 @@ export default function SchedulePage() {
     appointmentDateString: '',
     timeWindow: '',
     name: '',
+    email: '',
     phone: '',
     address: '',
     notes: '',
@@ -55,14 +57,24 @@ export default function SchedulePage() {
   const [applianceOptions, setApplianceOptions] = useState([]);
   const [problemOptions, setProblemOptions] = useState([]);
 
+  const [ isSubmitting, setIsSubmitting] = useState(false);
+  const [ submitError, setSubmitError] = useState('');
+  const [ submitSuccess, setSubmitSuccess] = useState(null);
+
+  const [loadingError, setLoadingError] = useState('');
+
   useEffect(() => {
     async function fetchAppliances() {
       try {
         const res = await fetch('/api/appliances');
+        if (!res.ok) {
+          throw new Error('Network response was not ok');
+        }
         const data = await res.json();
         setApplianceOptions(data);
       } catch (error) {
         console.error("Failed to fetch appliances:", error);
+        setLoadingError("Could not load required form data. Please try refreshing the page.");
       }
     }
     fetchAppliances();
@@ -91,13 +103,38 @@ export default function SchedulePage() {
   const nextStep = () => setStep(prev => prev + 1);
   const prevStep = () => setStep(prev => prev - 1);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Submitting final data:", formData);
-    // Final API call will go here
+ const handleSubmit = async () => {
+    setIsSubmitting(true);
+    setSubmitError('');
+    setSubmitSuccess(null);
+
+    try {
+      const response = await fetch('/api/intake', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'An unknown error occurred.');
+      }
+
+
+      setSubmitSuccess(result);
+      nextStep(); 
+
+    } catch (error) {
+      console.error("Submission failed:", error);
+      setSubmitError(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  // The main render logic, now updated for the new step order
   const renderCurrentStep = () => {
     switch (step) {
       case 1:
@@ -131,16 +168,26 @@ export default function SchedulePage() {
             prevStep={prevStep}
             handleSubmit={handleSubmit} 
             validationSchema={validationSchemas.step4}
+            isSubmitting={isSubmitting}
+            submitError={submitError}
           />
         );
+        case 5: // This is our new "Thank You" screen
+        return (
+          <div className="text-center py-8">
+            <h2 className="text-2xl font-bold text-green-600">Request Submitted!</h2>
+            <p className="mt-2 text-gray-600">Your ticket ID is: <span className="font-mono bg-gray-100 p-1 rounded">{submitSuccess?.ticket_id}</span></p>
+            <p className="mt-4">We will be in touch shortly to confirm your appointment.</p>
+          </div>
+        );
       default:
-        return <div>Review & Submit</div>;
+        return <Step1_ZipCode formData={formData} setFormData={setFormData} nextStep={nextStep} validationSchema={validationSchemas.step1} />;
     }
   };
 
-  return (
+ return (
     <div className="bg-gray-100 min-h-screen p-4 sm:p-8">
-      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6 sm:p-8">
+      <div className="w-full max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6 sm:p-8">
         
         <ProgressIndicator steps={WIZARD_STEPS} currentStep={step} />
 

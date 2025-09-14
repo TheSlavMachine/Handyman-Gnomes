@@ -13,21 +13,6 @@ const TIME_SLOTS = [
   { id: "Afternoon", label: "Afternoon", time: "12pm - 5pm" },
 ];
 
-// --- CALENDAR SIZE & STYLE CONTROLS ---
-const calendarStyles = {
-  // We keep our previous width/height controls
-  day: {
-    width: 'auto',
-    height: '2.25rem',
-  },
-  // --- NEW: Make the day numbers larger ---
-  // We reduce the padding, which gives more room for the font.
-  day_button: {
-    padding: '0.25rem', // You can adjust this value
-  },
-};
-// --- END OF CONTROLS ---
-
 export default function Step3_Scheduler({ formData, setFormData, nextStep, prevStep }) {
   const handleDateSelect = (date) => {
     setFormData(prev => ({ 
@@ -44,26 +29,25 @@ export default function Step3_Scheduler({ formData, setFormData, nextStep, prevS
   const isNextDisabled = !formData.appointmentDate || !formData.timeWindow;
 
   return (
-    <div className="grid gap-6 py-4">
-      <div className="space-y-2">
+    <div className="grid gap-5 py-0">
+      <div className="space-y-1">
         <h3 className="font-semibold text-lg">Step 3: Schedule Your Appointment</h3>
         <p className="text-sm text-gray-600">Select an available date and a time window for your service.</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-5">
-        <div className="md:col-span-3">
+      <div className="flex flex-col gap-8 md:flex-row md:gap-8">
+         <div className="custom-calendar-container">
           <Calendar
             mode="single"
             selected={formData.appointmentDate}
             onSelect={handleDateSelect}
             disabled={(date) => date < new Date(new Date().setDate(new Date().getDate() - 1))}
-            styles={calendarStyles}
-            className="rounded-md border p-0 w-full"
+            className="rounded-md border p-2 w-full" 
           />
         </div>
         
-        <div className="md:col-span-2 space-y-4">
-          {/* --- NEW: Updated styling for the date header --- */}
+        {/* 2. Time Slot Container that fills remaining space */}
+        <div className="flex-1 space-y-4">
           <h4 className="text-lg font-bold text-primary text-center md:text-left">
             {formData.appointmentDate ? format(formData.appointmentDate, 'cccc, LLLL d') : 'Please select a date'}
           </h4>

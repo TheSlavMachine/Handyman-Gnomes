@@ -16,7 +16,7 @@ const DISCLAIMERS = [
   "An exact arrival time will be confirmed via email.",
 ];
 
-export default function Step4_Contact({ formData, setFormData, prevStep, handleSubmit, validationSchema }) {
+export default function Step4_Contact({ formData, setFormData, prevStep, handleSubmit, validationSchema, isSubmitting, submitError }) {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -27,31 +27,27 @@ export default function Step4_Contact({ formData, setFormData, prevStep, handleS
     }
   };
 
-  // --- THIS IS THE CORRECTED FUNCTION ---
   const handleFinalSubmit = (e) => {
     e.preventDefault();
     const result = validationSchema.safeParse(formData);
 
     if (!result.success) {
-      // Use .flatten() to safely get a simple object of field errors.
-      // This is the robust way to handle Zod errors.
       const fieldErrors = result.error.flatten().fieldErrors;
       setErrors(fieldErrors);
       return;
     }
     
     setErrors({});
-    // Pass the now validated data to the parent's final submit function.
-    handleSubmit(result.data); 
+    handleSubmit(); 
   };
 
-  const isSubmitDisabled = !formData.name || !formData.phone || !formData.address || !agreedToTerms;
+   const isSubmitDisabled = !formData.name || !formData.phone || !formData.address || !agreedToTerms || isSubmitting;
 
   return (
     <form onSubmit={handleFinalSubmit}>
-      <div className="grid gap-4 py-4 md:grid-cols-2">
+      <div className="grid gap-4 py-0 md:grid-cols-2">
         <div className="grid gap-4">
-          <div className="space-y-2">
+          <div className="space-y-1">
             <h3 className="font-semibold text-lg">Step 4: Contact & Details</h3>
             <p className="text-sm text-gray-600">Please confirm your details to finish scheduling.</p>
           </div>
@@ -59,6 +55,11 @@ export default function Step4_Contact({ formData, setFormData, prevStep, handleS
             <Label htmlFor="name">Full Name</Label>
             <Input id="name" value={formData.name} onChange={(e) => handleFieldChange('name', e.target.value)} />
             {errors.name && <p className="text-sm font-medium text-destructive">{errors.name[0]}</p>}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email Address</Label>
+            <Input id="email" type="email" placeholder="you@example.com" value={formData.email} onChange={(e) => handleFieldChange('email', e.target.value)} />
+            {errors.email && <p className="text-sm font-medium text-destructive">{errors.email[0]}</p>}
           </div>
           <div className="space-y-2">
             <Label htmlFor="phone">Phone Number</Label>
@@ -87,6 +88,7 @@ export default function Step4_Contact({ formData, setFormData, prevStep, handleS
               <div className="flex justify-between"><span className="text-gray-600">Problem:</span><span className="font-medium">{formData.problem}</span></div>
               <div className="flex justify-between border-t pt-2 mt-2"><span className="text-gray-600">Date:</span><span className="font-medium">{formData.appointmentDate ? format(formData.appointmentDate, 'EEE, LLL d') : 'N/A'}</span></div>
               <div className="flex justify-between"><span className="text-gray-600">Time:</span><span className="font-medium">{formData.timeWindow}</span></div>
+              <div className="flex justify-between border-t pt-2 mt-2"><span className="text-gray-600">Email:</span><span className="font-medium">{formData.email}</span></div>
             </CardContent>
             <CardFooter className="pt-4 border-t">
               <ul className="text-xs text-gray-500 space-y-1">
@@ -109,9 +111,15 @@ export default function Step4_Contact({ formData, setFormData, prevStep, handleS
         </div>
       </div>
 
+
+      {submitError && <p className="text-sm font-medium text-destructive mt-4 text-center">{submitError}</p>}
+      
       <div className="flex justify-between pt-8 border-t mt-6">
         <Button variant="outline" type="button" onClick={prevStep}>Back</Button>
-        <Button type="submit" disabled={isSubmitDisabled}>Submit Request</Button>
+
+        <Button type="submit" disabled={isSubmitDisabled}>
+          {isSubmitting ? "Submitting..." : "Submit Request"}
+        </Button>
       </div>
     </form>
   );

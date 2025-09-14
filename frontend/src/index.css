@@ -66,3 +66,32 @@
     @apply bg-background text-foreground;
   }
 }
+
+.rdp-table {
+  border-spacing: 0 0.5rem; /* Horizontal | Vertical */
+}
+
+.rdp-months {
+  width: 100%;
+}
+
+/* This targets the button inside each day cell. */
+.rdp-day_button {
+  width: 100%;
+  height: 2.5rem; /* You can adjust this height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 0.875rem; /* You can adjust this font size */
+}
+
+.custom-calendar-container {
+  width: 100%;
+  max-width: 24rem; 
+  margin: 0 auto;
+}
+
+.custom-calendar-container .rdp-table {
+  table-layout: fixed;
+}

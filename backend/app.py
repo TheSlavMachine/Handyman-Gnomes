@@ -28,13 +28,10 @@ with open(APPLIANCES_FILE, "r") as f:
 def intake_request():
     data = request.json
     
-    # --- 2. ADDED BACKEND VALIDATION (THE SECURITY GATE) ---
-    # Define our validation rules using regular expressions
     zip_pattern = re.compile(r'^\d{5}$')
-    phone_pattern = re.compile(r'^\(\d{3}\) \d{3}-\d{4}$') # Matches (123) 456-7890
+    phone_pattern = re.compile(r'^[0-9\s()+-]+$') 
     name_pattern = re.compile(r"^[a-zA-Z\s'-]+$")
 
-    # Check each piece of data against the rules
     if not zip_pattern.match(data.get('zipCode', '')):
         return jsonify({"error": "Invalid ZIP code format"}), 400
     if not name_pattern.match(data.get('name', '')):
@@ -43,10 +40,9 @@ def intake_request():
         return jsonify({"error": "Invalid phone number format"}), 400
     if len(data.get('notes', '')) > 500:
         return jsonify({"error": "Notes cannot exceed 500 characters"}), 400
-    # --- END OF VALIDATION ---
 
-    # Check for slot availability (your original logic, still good)
-    appointment_date = data.get("appointmentDateString") # Use the formatted string
+
+    appointment_date = data.get("appointmentDateString") 
     slot = data.get("timeWindow")
     if appointment_date and slot:
         existing_count = models.IntakeLog.objects.filter(
@@ -59,18 +55,12 @@ def intake_request():
     ticket_id = uuid.uuid4().hex
 
     try:
-        # --- 3. UPDATED DATABASE LOGIC TO MATCH NEW MODELS.PY ---
-        
-        # Step A: Find or create the Appliance objects based on the names sent from the frontend.
-        # The frontend sends a list of names, e.g., ["Dryer", "Washer"]
         appliance_names = data.get('appliances', [])
         appliance_objs = []
         for name in appliance_names:
             appliance, created = models.Appliance.objects.get_or_create(name=name)
             appliance_objs.append(appliance)
 
-        # Step B: Create the main IntakeLog object with all the simple fields.
-        # Note we are NOT including 'appliances' here yet.
         intake_log = models.IntakeLog.objects.create(
             ticket_id=ticket_id,
             brand=data.get('brand'),
@@ -86,12 +76,11 @@ def intake_request():
             status="NEW",
         )
 
-        # Step C: Now that the intake_log exists, associate the appliance objects with it.
-        # This is the correct way to handle a ManyToManyField.
+
         if appliance_objs:
             intake_log.appliances.set(appliance_objs)
 
-        # Your original email logic is still perfect.
+  
         email_payload = {**data, "ticket_id": ticket_id}
         # send_handyman_email(email_payload)
         # send_customer_confirmation(email_payload)
@@ -101,7 +90,7 @@ def intake_request():
         print(f"Intake submission failed: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
-# --- NO CHANGES TO THE ROUTES BELOW THIS LINE ---
+
     
 @app.route("/api/appliances", methods=["GET"])
 def get_appliances():
@@ -131,7 +120,7 @@ def get_time_windows():
 
     return jsonify(time_windows)
 
-# --- 2. ADDED THIS NEW ROUTE ---
+
 @app.route('/api/reverse-geocode', methods=['GET'])
 def reverse_geocode():
     lat = request.args.get('lat')
@@ -150,7 +139,6 @@ def reverse_geocode():
     except requests.exceptions.RequestException as e:
         print(f"Failed to fetch from OpenStreetMap: {e}")
         return jsonify({"error": "Failed to fetch address data"}), 502
-# --- END OF NEW ROUTE ---
 
 if __name__ == '__main__':
     app.run(host="127.0.0.1", port=5000, debug=True, use_reloader=False)

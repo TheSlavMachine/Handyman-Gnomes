@@ -54,8 +54,8 @@ export default function Step2_Service({ formData, setFormData, applianceOptions,
   };
 
   return (
-    <div className="grid gap-6 py-4">
-      <div className="space-y-2">
+    <div className="grid gap-6 py-0">
+      <div className="space-y-1">
         <h3 className="font-semibold text-lg">Step 2: Service Details</h3>
         <p className="text-sm text-gray-600">Tell us about the appliance that needs service.</p>
       </div>
