@@ -41,7 +41,6 @@ def intake_request():
     if len(data.get('notes', '')) > 500:
         return jsonify({"error": "Notes cannot exceed 500 characters"}), 400
 
-
     appointment_date = data.get("appointmentDateString") 
     slot = data.get("timeWindow")
     if appointment_date and slot:
