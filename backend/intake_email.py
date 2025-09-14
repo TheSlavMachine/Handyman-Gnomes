@@ -13,13 +13,16 @@ HANDYMAN_EMAIL = os.environ.get("HANDYMAN_EMAIL", "handyman@example.com")
 
 def send_handyman_email(payload):
     try:
+        appliances_list = payload.get('appliances', [])
+        appliances_str = ", ".join(html.escape(a) for a in appliances_list)
+
         subject = f"New Job Request: {payload['ticket_id']}"
         html_content = f"""
         <h1>New Job Request</h1>
         <table border="1" cellpadding="5">
             <tr><th>Field</th><th>Value</th></tr>
             <tr><td>Ticket ID</td><td>{html.escape(payload['ticket_id'])}</td></tr>
-            <tr><td>Appliance</td><td>{html.escape(payload['appliance'])}</td></tr>
+            <tr><td>Appliances</td><td>{appliances_str}</td></tr>
             <tr><td>Problem</td><td>{html.escape(payload['problem'])}</td></tr>
             <tr><td>Problem Other</td><td>{html.escape(payload.get('problem_other', ''))}</td></tr>
             <tr><td>Name</td><td>{html.escape(payload['name'])}</td></tr>
