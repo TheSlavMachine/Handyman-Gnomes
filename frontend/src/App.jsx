@@ -5,7 +5,6 @@ import About from './components/About';
 import Location from './components/Location';
 import FAQ from './components/FAQ';
 import Testimonials from './components/Testimonials';
-import Services from './components/Services';
 import Footer from './components/Footer';
 
 function App() {
@@ -17,7 +16,6 @@ function App() {
       <Hero />
 
       <Appliances />
-      {/*  */}
 
       <About />
 
@@ -26,13 +24,8 @@ function App() {
 
       <FAQ />
     
-      {/* Upfront prices */}
-      
-      {/* <HowItWorks /> */}
-      {/* Find testimonial library */}
       <Testimonials />
 
-      {/* <Services /> */}
       <Footer />
     </div>
   );
