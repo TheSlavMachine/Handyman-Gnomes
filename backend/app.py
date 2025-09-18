@@ -75,20 +75,17 @@ def intake_request():
             status="NEW",
         )
 
-
         if appliance_objs:
             intake_log.appliances.set(appliance_objs)
-
   
         email_payload = {**data, "ticket_id": ticket_id}
-        # send_handyman_email(email_payload)
-        # send_customer_confirmation(email_payload)
+        send_handyman_email(email_payload)
+        send_customer_confirmation(email_payload)
 
         return jsonify({"message": "Job scheduled successfully", "ticket_id": ticket_id}), 201
     except Exception as e:
         print(f"Intake submission failed: {e}")
         return jsonify({"error": "Internal server error"}), 500
-
 
     
 @app.route("/api/appliances", methods=["GET"])
@@ -118,7 +115,6 @@ def get_time_windows():
     time_windows = [choice[0] for choice in models.IntakeLog.TWIN_CHOICES]
 
     return jsonify(time_windows)
-
 
 @app.route('/api/reverse-geocode', methods=['GET'])
 def reverse_geocode():

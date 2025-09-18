@@ -9,12 +9,20 @@ resend.api_key = os.environ.get("RESEND_API_KEY")
 
 logger = logging.getLogger(__name__)
 
-HANDYMAN_EMAIL = os.environ.get("HANDYMAN_EMAIL", "handyman@example.com")
+HANDYMAN_EMAIL = os.environ.get("HANDYMAN_EMAIL", "xamorris@proton.me")
 
 def send_handyman_email(payload):
     try:
-        appliances_list = payload.get('appliances', [])
-        appliances_str = ", ".join(html.escape(a) for a in appliances_list)
+        appliances_raw = payload.get('appliances', "")
+        appliances_parts = appliances_raw.split("\\")
+        appliances_pairs = []
+        for i in range(0, len(appliances_parts), 2):
+            if i + 1 < len(appliances_parts):
+                appliances_pairs.append(f"{appliances_parts[i]} - {appliances_parts[i+1]}")
+            else:
+                appliances_pairs.append(appliances_parts[i])
+        
+        appliances_str = "<br>".join(html.escape(pair) for pair in appliances_pairs)
 
         subject = f"New Job Request: {payload['ticket_id']}"
         html_content = f"""

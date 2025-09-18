@@ -16,7 +16,6 @@ class IntakeLog(models.Model):
     ]
 
     ticket_id = models.CharField(max_length=36, unique=True, db_index=True)
-    
 
     appliances = models.ManyToManyField(Appliance, related_name="intake_logs")
     
