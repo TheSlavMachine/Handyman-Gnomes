@@ -6,13 +6,14 @@ test_payload = {
     "phone": "123-456-7890",
     "address": "123 Test Lane",
     "time_window": "Afternoon",
-    "email": "delivered@resend.dev",
+    "email": "xamorris@proton.me",
     "serial_number": "SN123456",
     "description": "These machines don't work!",
     "notes": "I love you!"
 }
 
-from intake_email import send_handyman_email, send_customer_confirmation
+from intake_email import send_handyman_email, send_customer_confirmation, send_customer_appointment_time
 
 send_handyman_email(test_payload)
-send_customer_confirmation(test_payload)
+#send_customer_confirmation(test_payload)
+send_customer_appointment_time({**test_payload, "selected_time": "8-9am"})
