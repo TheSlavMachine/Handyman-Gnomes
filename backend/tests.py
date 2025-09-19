@@ -4,7 +4,7 @@ test_payload = {
     "problem": "Leaking water",
     "name": "Xander Morris",
     "phone": "123-456-7890",
-    "address": "123 Test Lane",
+    "address": "somewhere someplace, az, 85000",
     "email": "xamorris@proton.me",
     "time_window": "Afternoon",
     "serial_number": "SN123456",
