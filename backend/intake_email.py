@@ -32,6 +32,7 @@ def send_handyman_email(payload):
             time_slots_html += f"<tr><td><a href='{url}'>{html.escape(slot)}</a></td></tr>"
 
         reachout_option_url = f"{base_url}/api/appointment-action?ticket_id={ticket}&action=reachout&time=contact_client"
+        google_maps_url = f"https://www.google.com/maps/dir/?api=1&destination={html.escape(payload['address'])}"
         time_slots_html += f"<tr><td><a href='{reachout_option_url}'>Will reach out to the client</a></td></tr>"
 
         appliances_raw = payload.get('appliances', "")
@@ -56,7 +57,8 @@ def send_handyman_email(payload):
             <tr><td>Problem Other</td><td>{html.escape(payload.get('problem_other', ''))}</td></tr>
             <tr><td>Name</td><td>{html.escape(payload['name'])}</td></tr>
             <tr><td>Phone</td><td>{html.escape(payload['phone'])}</td></tr>
-            <tr><td>Address</td><td>{html.escape(payload['address'])}</td></tr>
+            <tr><td>Address</td><td>{google_maps_url}</td></tr>
+            <tr><td>Email</td><td>{html.escape(payload['email'])}</td></tr>
             <tr><td>Time Window</td><td>{html.escape(payload['time_window'])}</td></tr>
             <tr><td>Serial Number</td><td>{html.escape(payload.get('serial_number', ''))}</td></tr>
             <tr><td>Description</td><td>{html.escape(payload.get('description', ''))}</td></tr>

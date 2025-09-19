@@ -57,7 +57,7 @@ def intake_request():
         appliance_names = data.get('appliances', [])
         appliance_objs = []
         for name in appliance_names:
-            appliance, created = models.Appliance.objects.get_or_create(name=name)
+            appliance, _ = models.Appliance.objects.get_or_create(name=name)
             appliance_objs.append(appliance)
 
         intake_log = models.IntakeLog.objects.create(
@@ -68,6 +68,7 @@ def intake_request():
             name=data.get('name'),
             phone=data.get('phone'),
             address=data.get('address'),
+            email=data.get('email'),
             time_window=slot,
             appointment_date=appointment_date,
             serial_number=data.get('serialNumber', ''),

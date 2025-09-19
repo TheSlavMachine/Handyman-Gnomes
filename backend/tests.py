@@ -5,8 +5,8 @@ test_payload = {
     "name": "Xander Morris",
     "phone": "123-456-7890",
     "address": "123 Test Lane",
-    "time_window": "Afternoon",
     "email": "xamorris@proton.me",
+    "time_window": "Afternoon",
     "serial_number": "SN123456",
     "description": "These machines don't work!",
     "notes": "I love you!"
