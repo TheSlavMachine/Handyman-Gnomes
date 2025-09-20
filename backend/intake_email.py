@@ -1,39 +1,86 @@
 import logging
 import os
-from resend import Resend
+import resend
+import html
+import json
+from dotenv import load_dotenv
+from urllib.parse import quote_plus
 
-resend_api_key = os.environ.get("RESEND_API_KEY")
-resend_client = Resend(api_key=resend_api_key)
+load_dotenv()
+resend.api_key = os.environ.get("RESEND_API_KEY")
 
 logger = logging.getLogger(__name__)
 
+HANDYMAN_EMAIL = os.environ.get("HANDYMAN_EMAIL", "xamorris@proton.me")
+base_url = os.environ['PUBLIC_APP_URL']
+
+TIME_SLOTS_FILE = "info_jsons/time_slots.json"
+
+with open(TIME_SLOTS_FILE, "r") as f:
+    TIME_SLOTS = json.load(f)
+
 def send_handyman_email(payload):
     try:
+        ticket = html.escape(payload['ticket_id'])
+        reachout_url_base = f"{base_url}/api/appointment-action?ticket_id={ticket}&action=reachout&time="
+
+        time_window = payload.get('time_window', 'Morning') 
+        available_slots = TIME_SLOTS.get(time_window, [])
+
+        time_slots_html = ""
+        for slot in available_slots:
+            url = f"{reachout_url_base}{html.escape(slot)}"
+            time_slots_html += f"<tr><td><a href='{url}'>{html.escape(slot)}</a></td></tr>"
+
+        reachout_option_url = f"{base_url}/api/appointment-action?ticket_id={ticket}&action=reachout&time=contact_client"
+        address = payload.get('address', '')
+        maps_dest = quote_plus(address)
+        google_maps_url = f"https://www.google.com/maps/dir/?api=1&destination={maps_dest}"
+        maps_link = f"<a href='{html.escape(google_maps_url)}'>{html.escape(address)}</a>"
+        time_slots_html += f"<tr><td><a href='{reachout_option_url}'>Will reach out to the client</a></td></tr>"
+
+        appliances_raw = payload.get('appliances', "")
+        appliances_parts = appliances_raw.split("\\")
+        appliances_pairs = []
+        for i in range(0, len(appliances_parts), 2):
+            if i + 1 < len(appliances_parts):
+                appliances_pairs.append(f"{appliances_parts[i]} - {appliances_parts[i+1]}")
+            else:
+                appliances_pairs.append(appliances_parts[i])
+        
+        appliances_str = "<br>".join(html.escape(pair) for pair in appliances_pairs)
+
         subject = f"New Job Request: {payload['ticket_id']}"
         html_content = f"""
         <h1>New Job Request</h1>
         <table border="1" cellpadding="5">
             <tr><th>Field</th><th>Value</th></tr>
-            <tr><td>Ticket ID</td><td>{payload['ticket_id']}</td></tr>
-            <tr><td>Appliance</td><td>{payload['appliance']}</td></tr>
-            <tr><td>Problem</td><td>{payload['problem']}</td></tr>
-            <tr><td>Problem Other</td><td>{payload.get('problem_other', '')}</td></tr>
-            <tr><td>Name</td><td>{payload['name']}</td></tr>
-            <tr><td>Phone</td><td>{payload['phone']}</td></tr>
-            <tr><td>Address</td><td>{payload['address']}</td></tr>
-            <tr><td>Time Window</td><td>{payload['time_window']}</td></tr>
-            <tr><td>Serial Number</td><td>{payload.get('serial_number', '')}</td></tr>
-            <tr><td>Description</td><td>{payload.get('description', '')}</td></tr>
-            <tr><td>Notes</td><td>{payload.get('notes', '')}</td></tr>
+            <tr><td>Ticket ID</td><td>{html.escape(payload['ticket_id'])}</td></tr>
+            <tr><td>Appliances</td><td>{appliances_str}</td></tr>
+            <tr><td>Problem</td><td>{html.escape(payload['problem'])}</td></tr>
+            <tr><td>Problem Other</td><td>{html.escape(payload.get('problem_other', ''))}</td></tr>
+            <tr><td>Name</td><td>{html.escape(payload['name'])}</td></tr>
+            <tr><td>Phone</td><td><a href="tel:+1{html.escape(payload['phone'])}">{html.escape(payload['phone'])}</a></td></tr>
+            <tr><td>Address</td><td>{maps_link}</td></tr>
+            <tr><td>Email</td><td>{html.escape(payload['email'])}</td></tr>
+            <tr><td>Time Window</td><td>{html.escape(payload['time_window'])}</td></tr>
+            <tr><td>Serial Number</td><td>{html.escape(payload.get('serial_number', ''))}</td></tr>
+            <tr><td>Description</td><td>{html.escape(payload.get('description', ''))}</td></tr>
+            <tr><td>Notes</td><td>{html.escape(payload.get('notes', ''))}</td></tr>
+        </table>
+        <h1>Time Slots</h1>
+        <table border="1" cellpadding="5">
+            {time_slots_html}
         </table>
         """
 
-        resend_client.emails.send(
-            from_email="no-reply@handyman.com",
-            to=["handyman@example.com"],
-            subject=subject,
-            html=html_content
-        )
+        resend.Emails.send({
+            "from": "Handyman Gnomes <onboarding@resend.dev>",
+            "to": [HANDYMAN_EMAIL],
+            "subject": subject,
+            "html": html_content,
+            "reply_to": [payload['email']],
+        })
     except Exception as e:
         logger.error(f"Failed to send handyman email: {e}")
         raise
@@ -42,19 +89,46 @@ def send_customer_confirmation(payload):
     try:
         subject = f"Your Handyman Job Ticket: {payload['ticket_id']}"
         html_content = f"""
-        <p>Hello, {payload['name']}!,</p>
+        <p>Hello, {html.escape(payload['name'])}!</p>
         <p>Thank you for submitting your service request!</p>
-        <p>Your ticket ID is <strong>{payload['ticket_id']}</strong>.</p>
+        <p>Your ticket ID is <strong>{html.escape(payload['ticket_id'])}</strong>.</p>
         <p>We will contact you soon to confirm your appointment.</p>
         <p>— Handyman Name</p>
         """
 
-        resend_client.emails.send(
-            from_email="no-reply@handyman.com",
-            to=[payload['email']], 
-            subject=subject,
-            html=html_content
-        )
+        resend.Emails.send({
+            "from": "Handyman Gnomes <onboarding@resend.dev>",
+            "to": [payload['email']],
+            "subject": subject,
+            "html": html_content,
+            "reply_to": [payload['email']],
+        })
     except Exception as e:
         logger.error(f"Failed to send customer email: {e}")
+        raise
+
+def send_customer_appointment_time(payload):
+    try:
+        ticket = html.escape(payload['ticket_id'])
+        handyman_selected_time = html.escape(payload.get('selected_time', 'TBD'))
+
+        html_content = f"""
+        <p>Hello, {html.escape(payload['name'])}!</p>
+        <p>Thank you for submitting your service request.</p>
+        <p>Your ticket ID is <strong>{ticket}</strong>.</p>
+        <p>The handyman has selected your appointment time:</p>
+        <p><strong>{handyman_selected_time}</strong></p>
+        <p>We will contact you soon if any updates are needed.</p>
+        <p>— Handyman Team</p>
+        """
+
+        resend.Emails.send({
+            "from": "Handyman Gnomes <onboarding@resend.dev>",
+            "to": [payload['email']],
+            "subject": f"Confirmed Appointment for Ticket {ticket}",
+            "html": html_content,
+            "reply_to": [payload['email']],
+        })
+    except Exception as e:
+        logger.error(f"Failed to send customer appointment email: {e}")
         raise

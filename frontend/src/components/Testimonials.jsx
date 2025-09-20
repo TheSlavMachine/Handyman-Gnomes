@@ -15,7 +15,7 @@ function Testimonials() {
   ];
 
   return (
-    <section id="reviews" className="p-6 py-10 bg-gray-100">
+    <section className="p-6 py-10 bg-gray-100">
       <h2 className="text-3xl font-bold text-center mb-6">What Our Customers Say</h2>
       <div className="grid md:grid-cols-3 gap-6">
         {reviews.map((r) => (

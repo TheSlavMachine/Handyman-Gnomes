@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Dishwasher",
+    "problems": [
+      { "name": "Not draining" },
+      { "name": "Leaking water" },
+      { "name": "Not cleaning dishes" }
+    ]
+  },
+  {
+    "name": "Dryer",
+    "problems": [
+      { "name": "Not heating" },
+      { "name": "Drum not spinning" },
+      { "name": "Making noise" }
+    ]
+  },
+  {
+    "name": "Cooktop",
+    "problems": [
+      { "name": "Igniter not clicking" },
+      { "name": "Burner not lighting" },
+      { "name": "Temperature issues" }
+    ]
+  }
+]
+

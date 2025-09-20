@@ -1,0 +1,19 @@
+test_payload = {
+    "ticket_id": "TEST-123",
+    "appliances": "Dishwasher\\LG\\Washing Machine\\DG",
+    "problem": "Leaking water",
+    "name": "Xander Morris",
+    "phone": "2087710986",
+    "address": "somewhere someplace, az, 85000",
+    "email": "xamorris@proton.me",
+    "time_window": "Afternoon",
+    "serial_number": "SN123456",
+    "description": "These machines don't work!",
+    "notes": "I love you!"
+}
+
+from intake_email import send_handyman_email, send_customer_confirmation, send_customer_appointment_time
+
+send_handyman_email(test_payload)
+#send_customer_confirmation(test_payload)
+send_customer_appointment_time({**test_payload, "selected_time": "8-9am"})
