@@ -3,7 +3,7 @@ test_payload = {
     "appliances": "Dishwasher\\LG\\Washing Machine\\DG",
     "problem": "Leaking water",
     "name": "Xander Morris",
-    "phone": "123-456-7890",
+    "phone": "2087710986",
     "address": "somewhere someplace, az, 85000",
     "email": "xamorris@proton.me",
     "time_window": "Afternoon",

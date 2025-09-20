@@ -60,7 +60,7 @@ def send_handyman_email(payload):
             <tr><td>Problem</td><td>{html.escape(payload['problem'])}</td></tr>
             <tr><td>Problem Other</td><td>{html.escape(payload.get('problem_other', ''))}</td></tr>
             <tr><td>Name</td><td>{html.escape(payload['name'])}</td></tr>
-            <tr><td>Phone</td><td>{html.escape(payload['phone'])}</td></tr>
+            <tr><td>Phone</td><td><a href="tel:+1{html.escape(payload['phone'])}">{html.escape(payload['phone'])}</a></td></tr>
             <tr><td>Address</td><td>{maps_link}</td></tr>
             <tr><td>Email</td><td>{html.escape(payload['email'])}</td></tr>
             <tr><td>Time Window</td><td>{html.escape(payload['time_window'])}</td></tr>
