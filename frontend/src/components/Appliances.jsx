@@ -13,8 +13,8 @@ function Appliances() {
         {/* Oven */}
         <div className="bg-white shadow-md rounded-lg p-6 max-w-sm hover:shadow-lg transition-shadow duration-300">
           <img src="https://media.istockphoto.com/id/174952194/photo/appetizing-pork-joint-dinner-in-the-oven-for-thanksgiving-day.jpg?s=612x612&w=0&k=20&c=wGDcV1pKTdBIxLIo0fugg63-TgRWG0nurjgwVTl8aeY=" alt="Oven" className="w-full h-40 object-cover rounded-md mb-4" />
-          <h3 className="text-xl font-semibold mb-2">Kitchen Appliances</h3>
-          <div className="flex justify-center my-2">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-xl font-semibold">Kitchen Appliances</h3>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Oven-Gen--Streamline-Outlined-Material" 
             height={SIZE} width={SIZE}>
               <desc>
@@ -31,8 +31,8 @@ function Appliances() {
         {/* Fridge */}
         <div className="bg-white shadow-md rounded-lg p-6 max-w-sm hover:shadow-lg transition-shadow duration-300">
           <img src="https://www.kitchenaid.com/is/image/content/dam/business-unit/kitchenaid/en-us/marketing-content/site-assets/page-content/pinch-of-help/types-of-refrigerators/Types_of_Refrigerators_IMG_14_M.jpg?fmt=png-alpha&qlt=85,0&resMode=sharp2&op_usm=1.75,0.3,2,0&scl=1&constrain=fit,1" alt="Refrigerator" className="w-full h-40 object-cover rounded-md mb-4" />
-          <h3 className="text-xl font-semibold mb-2">Refrigerator Repair</h3>
-          <div className="flex justify-center my-2">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-xl font-semibold">Refrigerator Repair</h3>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Kitchen--Streamline-Rounded-Material" 
             height={SIZE} width={SIZE}>
               <desc>
@@ -42,15 +42,15 @@ function Appliances() {
             </svg>
           </div>
           <p className="text-gray-600">
-            Refrigerator not running? We can get it cooling again in no time.
+            Refrigerator not running? Get it cooling again in no time.
           </p>
         </div>
 
         {/* Dishwasher */}
         <div className="bg-white shadow-md rounded-lg p-6 max-w-sm hover:shadow-lg transition-shadow duration-300">
           <img src="https://d2xjmi1k71iy2m.cloudfront.net/dairyfarm/id/pageImages/page__en_us_1725352754557__0.jpeg" alt="Dishwasher" className="w-full h-40 object-cover rounded-md mb-4" />
-          <h3 className="text-xl font-semibold mb-2">Dishwasher Repair</h3>
-          <div className="flex justify-center my-2">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-xl font-semibold">Dishwasher Repair</h3>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Dishwasher-Fill--Streamline-Rounded-Fill-Material" 
             height={SIZE} width={SIZE}>
               <desc>
@@ -60,15 +60,15 @@ function Appliances() {
             </svg>
           </div>
           <p className="text-gray-600">
-            Save time spent handwashing dishes, service your dishwasher today.
+            Save time spent washing dishes, service your dishwasher today.
           </p>
         </div>
 
         {/* Washing Machine */}
         <div className="bg-white shadow-md rounded-lg p-6 max-w-sm hover:shadow-lg transition-shadow duration-300">
           <img src="https://linqcdn.avbportal.com/images/f473d7cd-1927-4f80-b625-2906aa94ebcf.jpg?w=640" alt="Washer/Dryer" className="w-full h-40 object-cover rounded-md mb-4" />
-          <h3 className="text-xl font-semibold mb-2">Washer/Dryer Repair</h3>
-          <div className="flex justify-center my-2">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-xl font-semibold">Washer/Dryer Repair</h3>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Local-Laundry-Service--Streamline-Rounded-Material" 
             height={SIZE} width={SIZE}>
               <desc>
@@ -78,7 +78,7 @@ function Appliances() {
             </svg>
           </div>
           <p className="text-gray-600">
-            Comprehensive repair and maintenance services for washers and dryers.
+            Comprehensive repair and maintenance for washers and dryers.
           </p>
         </div>
       </div>

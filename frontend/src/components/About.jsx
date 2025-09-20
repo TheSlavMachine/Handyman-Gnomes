@@ -1,6 +1,6 @@
 function About() {
   return (
-    <section id="about" className="py-16 px-10 bg-lightgray">
+    <section id="about" className="py-10 px-10 bg-lightgray">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-start md:items-center gap-12">
         
         {/* Left side text */}
@@ -21,7 +21,7 @@ function About() {
         {/* Right side brands box */}
         <div className="md:w-1/2 bg-white p-6 rounded shadow-md">
           <h3 className="text-2xl font-semibold mb-4 text-center">We cover brands including:</h3>
-          <ul className="grid grid-rows-3 grid-cols-[repeat(auto-fit,minmax(80px,1fr))] gap-4">
+          <ul className="grid grid-cols-3 md:grid-cols-4 gap-4">
             <li>
               <div className="w-full h-12 overflow-hidden">
                 <img src="https://cdn.worldvectorlogo.com/logos/samsung-8.svg" alt="Samsung logo" className="object-contain object-center w-full h-full" />

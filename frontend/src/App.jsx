@@ -5,7 +5,6 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import HowItWorks from './components/HowItWorks';
 import Testimonials from './components/Testimonials';
-import Services from './components/Services';
 import Footer from './components/Footer';
 
 function App() {
@@ -15,9 +14,18 @@ function App() {
       {/* The onScheduleClick prop is removed, as the buttons are now simple links. */}
       <Navbar />
       <Hero />
-      <HowItWorks />
+
+      <Appliances />
+
+      <About />
+
+      <Location />
+      {/* Get an outline of working zone */}
+
+      <FAQ />
+    
       <Testimonials />
-      <Services />
+
       <Footer />
     </div>
   );
