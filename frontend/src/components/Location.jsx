@@ -1,8 +1,32 @@
 // Location.jsx
+import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
+import { useEffect } from 'react';
+import L from 'leaflet';
+import "leaflet/dist/leaflet.css";
+import phoenixArea from '../data/City_Limit_Label.json';
+
+function FitBounds({ geoData }) {
+  const map = useMap();
+
+  useEffect(() => {
+    const geoJsonLayer = L.geoJSON(geoData);
+    map.fitBounds(geoJsonLayer.getBounds());
+  }, [map, geoData]);
+
+  return null;
+}
+
 function Location() {
+  const geoJsonStyle = {
+    color: 'red',
+    fillColor: 'orange',
+    fillOpacity: 0.5,
+    weight: 2,
+  };
+
   return (
-    <section id="location" className="flex flex-col py-12 px-10 bg-white w-full">
-      <h2 className="text-3xl font-bold text-left mb-4">
+    <section id="location" className="flex flex-col py-10 px-10 bg-white w-full">
+      <h2 className="text-4xl font-bold text-left mb-4">
         Location
       </h2>
       <p className="text-lg text-gray-600 text-left mb-8">
@@ -13,13 +37,16 @@ function Location() {
       <div className="flex flex-col md:flex-row w-full max-w-5xl mb-12">
         {/* Map container */}
         <div className="md:w-2/3 mb-8 md:mb-0 md:mr-8">
-          <iframe
-            title="Service Area Map - Tempe"
-            src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d130652.28439383305!2d-111.95641850933691!3d33.41303292183748!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1757378097496!5m2!1sen!2sus"
-            className="w-full h-80 rounded-lg shadow-md"
-            allowFullScreen=""
-            loading="lazy"
-          />
+          <MapContainer
+      style={{ height: "500px", width: "100%" }}
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <GeoJSON data={phoenixArea} style={geoJsonStyle} />
+      <FitBounds geoData={phoenixArea} />
+    </MapContainer>
         </div>
         {/* Cities We Service */}
         <div className="md:w-1/3 bg-gray-50 rounded-lg shadow-md p-4 flex flex-col justify-center">

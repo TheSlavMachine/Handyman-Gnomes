@@ -9,7 +9,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "handyman_orm.settings")
 django.setup()
 
 from django.utils import timezone
-from intake_email import send_handyman_email, send_customer_confirmation
+from intake_email import send_handyman_email, send_customer_confirmation, send_customer_appointment_time
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -32,15 +32,20 @@ def intake_request():
     phone_pattern = re.compile(r'^[0-9\s()+-]+$') 
     name_pattern = re.compile(r"^[a-zA-Z\s'-]+$")
 
-    if not zip_pattern.match(data.get('zipCode', '')):
-        return jsonify({"error": "Invalid ZIP code format"}), 400
-    if not name_pattern.match(data.get('name', '')):
-        return jsonify({"error": "Name contains invalid characters"}), 400
-    if not phone_pattern.match(data.get('phone', '')):
-        return jsonify({"error": "Invalid phone number format"}), 400
-    if len(data.get('notes', '')) > 500:
-        return jsonify({"error": "Notes cannot exceed 500 characters"}), 400
-
+    if not re.match(r'^\d{5}$', data.get('zipCode', '')):
+        return jsonify({"error": "Invalid ZIP code"}), 400
+    if not re.match(r"^[a-zA-Z\s'-]+$", data.get('name', '')):
+        return jsonify({"error": "Invalid name"}), 400
+    if not re.match(r'^[0-9\s()+-]+$', data.get('phone', '')) or len(data.get('phone', '')) < 7:
+        return jsonify({"error": "Invalid phone number"}), 400
+    if not data.get('email') or '@' not in data.get('email'):
+        return jsonify({"error": "A valid email is required"}), 400
+    if len(data.get('address', '')) < 10:
+        return jsonify({"error": "Address is too short"}), 400
+    if not data.get('brand'):
+        return jsonify({"error": "Brand is a required field"}), 400
+    if not data.get('problem'):
+        return jsonify({"error": "Problem is a required field"}), 400
 
     appointment_date = data.get("appointmentDateString") 
     slot = data.get("timeWindow")
@@ -58,7 +63,7 @@ def intake_request():
         appliance_names = data.get('appliances', [])
         appliance_objs = []
         for name in appliance_names:
-            appliance, created = models.Appliance.objects.get_or_create(name=name)
+            appliance, _ = models.Appliance.objects.get_or_create(name=name)
             appliance_objs.append(appliance)
 
         intake_log = models.IntakeLog.objects.create(
@@ -69,6 +74,7 @@ def intake_request():
             name=data.get('name'),
             phone=data.get('phone'),
             address=data.get('address'),
+            email=data.get('email'), 
             time_window=slot,
             appointment_date=appointment_date,
             serial_number=data.get('serialNumber', ''),
@@ -76,29 +82,22 @@ def intake_request():
             status="NEW",
         )
 
-
         if appliance_objs:
             intake_log.appliances.set(appliance_objs)
-
   
         email_payload = {**data, "ticket_id": ticket_id}
-        # send_handyman_email(email_payload)
-        # send_customer_confirmation(email_payload)
+        send_handyman_email(email_payload)
+        send_customer_confirmation(email_payload)
 
         return jsonify({"message": "Job scheduled successfully", "ticket_id": ticket_id}), 201
     except Exception as e:
         print(f"Intake submission failed: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
-
     
 @app.route("/api/appliances", methods=["GET"])
 def get_appliances():
-    appliances_no_problems = [
-        {k: v for k, v in appliance.items() if k != "problems"}
-        for appliance in APPLIANCES
-    ]
-    return jsonify(appliances_no_problems)
+    return jsonify(APPLIANCES)
 
 @app.route("/api/problems", methods=["GET"])
 def get_appliance_problems():
@@ -120,6 +119,29 @@ def get_time_windows():
 
     return jsonify(time_windows)
 
+@app.route('/api/appointment-action', methods=['GET'])
+def appointment_action():
+    try:
+        ticket_id = request.args.get('ticket_id')
+        action = request.args.get('action')
+        selected_time = request.args.get('time') 
+
+        if not ticket_id or not action or not selected_time:
+            return jsonify({"error": "Missing ticket_id, action, or time"}), 400
+
+        payload = {
+            "ticket_id": ticket_id,
+            "name": "Customer Name",        
+            "email": "customer@example.com",  
+            "selected_time": selected_time
+        }
+
+        send_customer_appointment_time(payload)
+
+        return f"Time '{selected_time}' recorded for ticket {ticket_id}. Customer notified."
+    except Exception as e:
+        print(f"Appointment action request failed: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 
 @app.route('/api/reverse-geocode', methods=['GET'])
 def reverse_geocode():
