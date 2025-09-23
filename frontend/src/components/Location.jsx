@@ -25,18 +25,18 @@ function Location() {
   };
 
   return (
-    <section id="location" className="flex flex-col py-10 px-10 bg-white w-full">
-      <h2 className="text-4xl font-bold text-left mb-4">
+    <section id="location" className="flex flex-col items-center py-10 px-10 bg-white w-full">
+      <h2 className="text-4xl font-bold text-center mb-4">
         Location
       </h2>
-      <p className="text-lg text-gray-600 text-left mb-8">
+      <p className="text-lg text-gray-600 text-center mb-8">
         We proudly serve homeowners across the Phoenix Valley.
       </p>
 
       {/* Map and Cities We Service flex container */}
       <div className="flex flex-col md:flex-row w-full max-w-5xl mb-12">
         {/* Map container */}
-        <div className="md:w-2/3 mb-8 md:mb-0 md:mr-8">
+        <div className="md:w-2/3 mb-8 md:mb-0 md:mr-8 relative z-0">
           <MapContainer
       style={{ height: "500px", width: "100%" }}
     >
@@ -63,7 +63,7 @@ function Location() {
       </div>
 
       {/* CTA */}
-      <div className="">
+      <div className="text-center">
         <a
           href="tel:+14805551234"
           className="bg-orange-600 text-white px-6 py-3 rounded-md shadow-md hover:bg-orange-700 transition"

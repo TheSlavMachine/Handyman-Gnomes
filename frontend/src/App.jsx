@@ -6,6 +6,10 @@ import Hero from './components/Hero';
 import HowItWorks from './components/HowItWorks';
 import Testimonials from './components/Testimonials';
 import Footer from './components/Footer';
+import Appliances from './components/Appliances';
+import About from './components/About';
+import Location from './components/Location';
+import FAQ from './components/FAQ';
 
 function App() {
   // All state management has been removed. This is now a simple page component.
