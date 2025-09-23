@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
 import { useEffect } from 'react';
 import L from 'leaflet';
 import "leaflet/dist/leaflet.css";
-import phoenixArea from '../data/City_Limit_Label.json';
+import phoenixArea from '../data/map.json';
 
 function FitBounds({ geoData }) {
   const map = useMap();

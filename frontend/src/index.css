@@ -96,3 +96,13 @@
 .custom-calendar-container .rdp-table {
   table-layout: fixed;
 }
+
+/* Smooth scrolling for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Offset anchor targets to account for sticky navbar */
+section[id] {
+  scroll-margin-top: 80px; /* Adjust this value based on your navbar height */
+}
