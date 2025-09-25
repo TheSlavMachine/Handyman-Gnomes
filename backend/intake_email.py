@@ -26,7 +26,6 @@ def send_handyman_email(payload):
         if not email:
             logger.error("No reply_to email provided for handyman email.")
             return
-            
         reachout_url_base = f"{base_url}/api/appointment-action?ticket_id={ticket}&action=reachout&time="
         time_window = payload.get('time_window', 'Morning') 
         available_slots = TIME_SLOTS.get(time_window, [])
@@ -38,17 +37,16 @@ def send_handyman_email(payload):
 
         reachout_option_url = f"{base_url}/api/appointment-action?ticket_id={ticket}&action=reachout&time=contact_client"
         time_slots_html += f"<tr><td><a href='{reachout_option_url}'>Will reach out to the client</a></td></tr>"
-        
+
         address = payload.get('address', '')
         maps_dest = quote_plus(address)
         google_maps_url = f"https://www.google.com/maps/search/?api=1&query={maps_dest}"
         maps_link = f"<a href='{html.escape(google_maps_url)}'>{html.escape(address)}</a>"
 
-        # --- FIX 1: Correctly handle the 'appliances' array ---
+        # Handle 'appliances' as an array
         appliances_list = payload.get('appliances', [])
         appliances_str = ", ".join(appliances_list)
 
-        # --- FIX 2: Add and format the new fields ---
         warranty_str = "Yes" if payload.get('isUnderWarranty') == 'yes' else "No"
 
         subject = f"New Job Request: {ticket}"
@@ -113,11 +111,11 @@ def send_customer_confirmation(payload):
         })
     except Exception as e:
         logger.error(f"Failed to send customer email: {e}")
-
 def send_customer_appointment_time(payload):
     try:
         email = payload.get('email')
-        if not email: return
+        if not email:
+            return
 
         ticket = html.escape(payload.get('ticket_id', 'N/A'))
         name = payload.get('name', 'Customer')

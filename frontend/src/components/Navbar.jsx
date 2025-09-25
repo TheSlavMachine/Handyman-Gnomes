@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -8,7 +9,7 @@ function Navbar() {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-6">
           <h1 className="text-2xl font-bold">
-            <a href="#">Sun State Appliance Repair</a>
+            <Link to="/">Sun State Appliance Repair</Link>
           </h1>
         </div>
         <button
@@ -31,9 +32,11 @@ function Navbar() {
           <a href="#reviews" className="hover:underline block md:inline-block py-2 md:py-0">
             Reviews
           </a>
-          <button className="bg-white text-orange-600 px-4 py-2 rounded hover:bg-gray-200 transition mt-2 md:mt-0 md:ml-4 w-full md:w-auto">
-            Schedule Now
-          </button>
+          <Link to="/schedule">
+            <button className="bg-white text-orange-600 px-4 py-2 rounded hover:bg-gray-200 transition mt-2 md:mt-0 md:ml-4 w-full md:w-auto">
+              Schedule Now
+            </button>
+          </Link>
         </div>
       </div>
     </nav>

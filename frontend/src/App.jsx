@@ -11,7 +11,6 @@ import About from './components/About';
 import Location from './components/Location';
 import FAQ from './components/FAQ';
 
-
 function App() {
   // All state management has been removed. This is now a simple page component.
   return (

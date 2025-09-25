@@ -31,14 +31,17 @@ def intake_request():
     zip_pattern = re.compile(r'^\d{5}$')
     phone_pattern = re.compile(r'^[0-9\s()+-]+$') 
     name_pattern = re.compile(r"^[a-zA-Z\s'-]+$")
-
-    if not re.match(r'^\d{5}$', data.get('zipCode', '')):
+    # Validate fields using compiled patterns and additional constraints
+    if not zip_pattern.match(data.get('zipCode', '')):
         return jsonify({"error": "Invalid ZIP code"}), 400
-    if not re.match(r"^[a-zA-Z\s'-]+$", data.get('name', '')):
+    if not name_pattern.match(data.get('name', '')):
         return jsonify({"error": "Invalid name"}), 400
-    if not re.match(r'^[0-9\s()+-]+$', data.get('phone', '')) or len(data.get('phone', '')) < 7:
+    phone_raw = data.get('phone', '')
+    # Require valid phone characters and at least 7 digits
+    if not phone_pattern.match(phone_raw) or len(re.sub(r"\D", "", phone_raw)) < 7:
         return jsonify({"error": "Invalid phone number"}), 400
-    if not data.get('email') or '@' not in data.get('email'):
+    email = data.get('email', '')
+    if not email or '@' not in email:
         return jsonify({"error": "A valid email is required"}), 400
     if len(data.get('address', '')) < 10:
         return jsonify({"error": "Address is too short"}), 400
@@ -46,6 +49,8 @@ def intake_request():
         return jsonify({"error": "Brand is a required field"}), 400
     if not data.get('problem'):
         return jsonify({"error": "Problem is a required field"}), 400
+    if len(data.get('notes', '')) > 500:
+        return jsonify({"error": "Notes cannot exceed 500 characters"}), 400
 
     appointment_date = data.get("appointmentDateString") 
     slot = data.get("timeWindow")
@@ -74,7 +79,7 @@ def intake_request():
             name=data.get('name'),
             phone=data.get('phone'),
             address=data.get('address'),
-            email=data.get('email'), 
+            email=data.get('email'),
             time_window=slot,
             appointment_date=appointment_date,
             serial_number=data.get('serialNumber', ''),
