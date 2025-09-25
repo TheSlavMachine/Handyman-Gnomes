@@ -1,6 +1,8 @@
 // src/pages/SchedulePage.jsx
 
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; 
+import { Button } from '@/components/ui/button';
 
 import Step1_ZipCode from '../components/steps/Step1_ZipCode'; 
 import Step2_Service from '../components/steps/Step2_Service'; 
@@ -17,7 +19,7 @@ export const validationSchemas = {
     zipCode: z.string().regex(/^\d{5}$/, { message: "Must be a 5-digit ZIP code." }),
   }),
   step2: z.object({
-    appliances: z.string().array().nonempty({ message: "Please select an appliance." }),
+    appliances: z.array(z.string()).nonempty({ message: "Please select an appliance." }),
     brand: z.string().min(1, { message: "Please select a brand." }),
     problem: z.string().min(1, { message: "Please select a problem." }),
     isUnderWarranty: z.enum(['yes', 'no'], { errorMap: () => ({ message: 'Please answer the warranty question.' }) }),
@@ -30,10 +32,10 @@ export const validationSchemas = {
       .min(7, { message: "Please enter a valid phone number." })
       .regex(/^[0-9\s()+-]+$/, { message: "Phone number can only contain numbers." }),
     address: z.string().min(5, { message: "Address is required." }),
-    notes: z.string().max(500, { message: "Notes cannot be longer than 500 characters." }).optional(),
+    notes: z.string().max(500, { message: "Notes cannot be longer than 500 characters." }).optional().or(z.literal('')),
   }),
-  // We will add schemas for step 2 and 3 later.
 };
+  // We will add schemas for step 2 and 3 later.
 
 export default function SchedulePage() {
   const [step, setStep] = useState(1);
@@ -103,18 +105,20 @@ export default function SchedulePage() {
   const nextStep = () => setStep(prev => prev + 1);
   const prevStep = () => setStep(prev => prev - 1);
 
- const handleSubmit = async () => {
+ const handleSubmit = async (validatedData) => {
     setIsSubmitting(true);
     setSubmitError('');
     setSubmitSuccess(null);
 
+    // --- We need to combine the validated data with the rest of the form data ---
+    const finalPayload = { ...formData, ...validatedData };
+
     try {
       const response = await fetch('/api/intake', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        headers: { 'Content-Type': 'application/json' },
+        // Send the complete, combined payload
+        body: JSON.stringify(finalPayload),
       });
 
       const result = await response.json();
@@ -170,6 +174,7 @@ export default function SchedulePage() {
             validationSchema={validationSchemas.step4}
             isSubmitting={isSubmitting}
             submitError={submitError}
+            
           />
         );
         case 5: // This is our new "Thank You" screen
@@ -178,14 +183,23 @@ export default function SchedulePage() {
             <h2 className="text-2xl font-bold text-green-600">Request Submitted!</h2>
             <p className="mt-2 text-gray-600">Your ticket ID is: <span className="font-mono bg-gray-100 p-1 rounded">{submitSuccess?.ticket_id}</span></p>
             <p className="mt-4">We will be in touch shortly to confirm your appointment.</p>
-          </div>
-        );
-      default:
-        return <Step1_ZipCode formData={formData} setFormData={setFormData} nextStep={nextStep} validationSchema={validationSchemas.step1} />;
+          <Link to="/">
+        
+        <Button 
+          variant="outline" 
+          className="mt-4 bg-orange-500 text-white hover:bg-orange-600 border-transparent"
+        >
+          Back to Main Page
+        </Button>
+      </Link>
+    </div>
+  );
     }
   };
 
- return (
+  // close renderCurrentStep  
+
+  return (
     <div className="bg-gray-100 min-h-screen p-4 sm:p-8">
       <div className="w-full max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6 sm:p-8">
         

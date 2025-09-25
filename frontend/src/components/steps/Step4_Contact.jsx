@@ -28,20 +28,20 @@ export default function Step4_Contact({ formData, setFormData, prevStep, handleS
   };
 
   const handleFinalSubmit = (e) => {
-    e.preventDefault();
-    const result = validationSchema.safeParse(formData);
+  e.preventDefault();
+  const result = validationSchema.safeParse(formData);
 
-    if (!result.success) {
-      const fieldErrors = result.error.flatten().fieldErrors;
-      setErrors(fieldErrors);
-      return;
-    }
-    
-    setErrors({});
-    handleSubmit(); 
-  };
+  if (!result.success) {
+    const fieldErrors = result.error.flatten().fieldErrors;
+    setErrors(fieldErrors);
+    return;
+  }
 
-   const isSubmitDisabled = !formData.name || !formData.phone || !formData.address || !agreedToTerms || isSubmitting;
+  setErrors({});
+  handleSubmit();
+};
+
+  const isSubmitDisabled = !formData.name || !formData.phone || !formData.address || !agreedToTerms || isSubmitting;
 
   return (
     <form onSubmit={handleFinalSubmit}>

@@ -31,13 +31,24 @@ def intake_request():
     zip_pattern = re.compile(r'^\d{5}$')
     phone_pattern = re.compile(r'^[0-9\s()+-]+$') 
     name_pattern = re.compile(r"^[a-zA-Z\s'-]+$")
-
+    # Validate fields using compiled patterns and additional constraints
     if not zip_pattern.match(data.get('zipCode', '')):
-        return jsonify({"error": "Invalid ZIP code format"}), 400
+        return jsonify({"error": "Invalid ZIP code"}), 400
     if not name_pattern.match(data.get('name', '')):
-        return jsonify({"error": "Name contains invalid characters"}), 400
-    if not phone_pattern.match(data.get('phone', '')):
-        return jsonify({"error": "Invalid phone number format"}), 400
+        return jsonify({"error": "Invalid name"}), 400
+    phone_raw = data.get('phone', '')
+    # Require valid phone characters and at least 7 digits
+    if not phone_pattern.match(phone_raw) or len(re.sub(r"\D", "", phone_raw)) < 7:
+        return jsonify({"error": "Invalid phone number"}), 400
+    email = data.get('email', '')
+    if not email or '@' not in email:
+        return jsonify({"error": "A valid email is required"}), 400
+    if len(data.get('address', '')) < 10:
+        return jsonify({"error": "Address is too short"}), 400
+    if not data.get('brand'):
+        return jsonify({"error": "Brand is a required field"}), 400
+    if not data.get('problem'):
+        return jsonify({"error": "Problem is a required field"}), 400
     if len(data.get('notes', '')) > 500:
         return jsonify({"error": "Notes cannot exceed 500 characters"}), 400
 
@@ -91,11 +102,7 @@ def intake_request():
     
 @app.route("/api/appliances", methods=["GET"])
 def get_appliances():
-    appliances_no_problems = [
-        {k: v for k, v in appliance.items() if k != "problems"}
-        for appliance in APPLIANCES
-    ]
-    return jsonify(appliances_no_problems)
+    return jsonify(APPLIANCES)
 
 @app.route("/api/problems", methods=["GET"])
 def get_appliance_problems():

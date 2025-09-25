@@ -7,11 +7,23 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+import OvenIcon from '../icons/OvenIcon';
+import FridgeIcon from '../icons/FridgeIcon';
+import DishwasherIcon from '../icons/DishwasherIcon';
+import WasherDryerIcon from '../icons/WasherDryerIcon';
+
 function cn(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
 const COMMON_BRANDS = ["Samsung", "LG", "Whirlpool", "GE", "Maytag", "Kenmore", "Bosch", "Other"];
+
+const applianceIconMap = {
+  "Oven": <OvenIcon />,
+  "Refrigerator": <FridgeIcon />,
+  "Dishwasher": <DishwasherIcon />,
+  "Washer / Dryer": <WasherDryerIcon />,
+};
 
 export default function Step2_Service({ formData, setFormData, applianceOptions, problemOptions, nextStep, prevStep, validationSchema }) {
   const [errors, setErrors] = useState({});
@@ -69,7 +81,9 @@ export default function Step2_Service({ formData, setFormData, applianceOptions,
             return (
               <button key={app.name} type="button" onClick={() => handleFieldChange('appliances', app.name)}
                 className={cn('flex flex-col items-center justify-center gap-2 rounded-lg border p-4 text-center transition-colors', isSelected ? 'border-primary bg-primary/10 text-primary' : 'hover:bg-accent hover:text-accent-foreground')}>
-                <div className="h-12 w-12 rounded-full bg-gray-200" />
+                <div className="h-12 w-12">
+                  {applianceIconMap[app.name] || <div className="h-full w-full rounded-full bg-gray-200" />}
+                </div>
                 <span className="font-medium">{app.name}</span>
               </button>
             );
@@ -102,8 +116,8 @@ export default function Step2_Service({ formData, setFormData, applianceOptions,
       <div className="space-y-2">
         <Label>Is your appliance covered under a manufacturer warranty?</Label>
         <RadioGroup onValueChange={(value) => handleFieldChange('isUnderWarranty', value)} defaultValue={formData.isUnderWarranty} className="flex items-center gap-4">
-          <div className="flex items-center space-x-2"><RadioGroupItem value="no" id="r-no" /><Label htmlFor="r-no">No</Label></div>
           <div className="flex items-center space-x-2"><RadioGroupItem value="yes" id="r-yes" /><Label htmlFor="r-yes">Yes</Label></div>
+          <div className="flex items-center space-x-2"><RadioGroupItem value="no" id="r-no" /><Label htmlFor="r-no">No</Label></div>
         </RadioGroup>
         {errors.isUnderWarranty && <p className="text-sm font-medium text-destructive mt-1">{errors.isUnderWarranty}</p>}
       </div>
