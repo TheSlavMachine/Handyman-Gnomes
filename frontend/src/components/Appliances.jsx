@@ -6,6 +6,8 @@ import FridgeIcon from './icons/FridgeIcon';
 import DishwasherIcon from './icons/DishwasherIcon';
 import WasherDryerIcon from './icons/WasherDryerIcon';
 
+const SIZE = 48;
+
 
 const iconComponents = {
   "Oven": <OvenIcon className="w-12 h-12" />,
