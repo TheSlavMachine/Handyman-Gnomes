@@ -10,11 +10,15 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "handyman_orm.settings")
 django.setup()
 
 from django.utils import timezone
-from intake_email import send_handyman_email, send_customer_confirmation, send_customer_appointment_time
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from core import models
+from intake_email import (
+    send_handyman_email,
+    send_customer_confirmation,
+    send_customer_appointment_time,
+)
 
 app = Flask(__name__)
 CORS(app)
@@ -65,7 +69,10 @@ def intake_request():
     
     ticket_id = uuid.uuid4().hex
 
+    
+
     try:
+
         appliance_names = data.get('appliances', [])
         appliance_objs = []
         for name in appliance_names:
@@ -90,7 +97,7 @@ def intake_request():
 
         if appliance_objs:
             intake_log.appliances.set(appliance_objs)
-  
+
         email_payload = {**data, "ticket_id": ticket_id}
         send_handyman_email(email_payload)
         send_customer_confirmation(email_payload)

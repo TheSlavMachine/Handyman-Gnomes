@@ -12,7 +12,7 @@ resend.api_key = os.environ.get("RESEND_API_KEY")
 logger = logging.getLogger(__name__)
 
 HANDYMAN_EMAIL = os.environ.get("HANDYMAN_EMAIL", "xamorris@proton.me")
-base_url = os.getenv('PUBLIC_APP_URL', 'http://localhost:5000')
+base_url = os.getenv("PUBLIC_APP_URL", "http://127.0.0.1:5000")
 
 TIME_SLOTS_FILE = "info_jsons/time_slots.json"
 
