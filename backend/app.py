@@ -6,18 +6,6 @@ import requests
 import re # 1. Import the regular expression module
 
 
-#
-from flask import Flask, jsonify
-from flask_cors import CORS
-
-app = Flask(__name__)
-CORS(app)
-
-@app.get("/api/health")
-def health():
-    return jsonify({"ok": True})
-#
-
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "handyman_orm.settings")
 django.setup()
 
