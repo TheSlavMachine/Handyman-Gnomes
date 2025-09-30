@@ -4,6 +4,7 @@ import json
 import uuid
 import requests
 import re # 1. Import the regular expression module
+from datetime import date as _date
 
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "handyman_orm.settings")
@@ -55,6 +56,20 @@ def intake_request():
     # Support both camelCase and snake_case from clients
     appointment_date = data.get("appointmentDateString") or data.get("appointment_date")
     slot = data.get("timeWindow") or data.get("time_window")
+
+    # Normalize/validate appointment_date
+    if isinstance(appointment_date, str) and appointment_date:
+        try:
+            appointment_date = _date.fromisoformat(appointment_date)
+        except ValueError:
+            return jsonify({"error": "Invalid appointment_date format (use YYYY-MM-DD)"}), 400
+    if not appointment_date:
+        return jsonify({"error": "appointment_date is required"}), 400
+
+    # Coerce slot to allowed choices
+    allowed_slots = [choice[0] for choice in models.IntakeLog.TWIN_CHOICES]
+    if not slot or slot not in allowed_slots:
+        slot = allowed_slots[0]
     if appointment_date and slot:
         existing_count = models.IntakeLog.objects.filter(
             appointment_date=appointment_date,
@@ -87,7 +102,7 @@ def intake_request():
             email=data.get('email'),
             time_window=slot,
             appointment_date=appointment_date,
-            serial_number=data.get('serialNumber', ''),
+            serial_number=data.get('serialNumber') or data.get('serial_number', ''),
             description=data.get('description', ''),
             notes=data.get('notes', ''),
             status="NEW",
@@ -100,7 +115,7 @@ def intake_request():
         email_payload = {
             **data,
             "ticket_id": ticket_id,
-            "appointmentDateString": appointment_date,
+            "appointmentDateString": str(appointment_date),
             "timeWindow": slot,
             "time_window": slot,
         }
