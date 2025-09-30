@@ -31,15 +31,12 @@ with open(APPLIANCES_FILE, "r") as f:
 
 @app.route('/api/intake', methods=['POST'])
 def intake_request():
-    data = request.json
+    data = request.json or {}
     
-    zip_pattern = re.compile(r'^\d{5}$')
     phone_pattern = re.compile(r'^[0-9\s()+-]+$') 
     name_pattern = re.compile(r"^[a-zA-Z\s'-]+$")
-    # Validate fields using compiled patterns and additional constraints
-    if not zip_pattern.match(data.get('zipCode', '')):
-        return jsonify({"error": "Invalid ZIP code"}), 400
-    if not name_pattern.match(data.get('name', '')):
+    # Validate fields using compiled patterns and additional constraints (make brand/zip optional)
+    if not name_pattern.match((data.get('name') or '').strip()):
         return jsonify({"error": "Invalid name"}), 400
     phone_raw = data.get('phone', '')
     # Require valid phone characters and at least 7 digits
@@ -50,15 +47,14 @@ def intake_request():
         return jsonify({"error": "A valid email is required"}), 400
     if len(data.get('address', '')) < 10:
         return jsonify({"error": "Address is too short"}), 400
-    if not data.get('brand'):
-        return jsonify({"error": "Brand is a required field"}), 400
     if not data.get('problem'):
         return jsonify({"error": "Problem is a required field"}), 400
     if len(data.get('notes', '')) > 500:
         return jsonify({"error": "Notes cannot exceed 500 characters"}), 400
 
-    appointment_date = data.get("appointmentDateString") 
-    slot = data.get("timeWindow")
+    # Support both camelCase and snake_case from clients
+    appointment_date = data.get("appointmentDateString") or data.get("appointment_date")
+    slot = data.get("timeWindow") or data.get("time_window")
     if appointment_date and slot:
         existing_count = models.IntakeLog.objects.filter(
             appointment_date=appointment_date,
@@ -73,7 +69,7 @@ def intake_request():
 
     try:
 
-        appliance_names = data.get('appliances', [])
+        appliance_names = data.get('appliances') or ([data.get('appliance')] if data.get('appliance') else [])
         appliance_objs = []
         for name in appliance_names:
             appliance, _ = models.Appliance.objects.get_or_create(name=name)
@@ -81,9 +77,10 @@ def intake_request():
 
         intake_log = models.IntakeLog.objects.create(
             ticket_id=ticket_id,
-            brand=data.get('brand'),
+            brand=data.get('brand') or 'Unknown',
             under_warranty=data.get('isUnderWarranty') == 'yes',
             problem=data.get('problem'),
+            problem_other=data.get('problem_other', ''),
             name=data.get('name'),
             phone=data.get('phone'),
             address=data.get('address'),
@@ -91,6 +88,7 @@ def intake_request():
             time_window=slot,
             appointment_date=appointment_date,
             serial_number=data.get('serialNumber', ''),
+            description=data.get('description', ''),
             notes=data.get('notes', ''),
             status="NEW",
         )
@@ -98,7 +96,14 @@ def intake_request():
         if appliance_objs:
             intake_log.appliances.set(appliance_objs)
 
-        email_payload = {**data, "ticket_id": ticket_id}
+        # Ensure downstream emails have both key styles present
+        email_payload = {
+            **data,
+            "ticket_id": ticket_id,
+            "appointmentDateString": appointment_date,
+            "timeWindow": slot,
+            "time_window": slot,
+        }
         send_handyman_email(email_payload)
         send_customer_confirmation(email_payload)
 
