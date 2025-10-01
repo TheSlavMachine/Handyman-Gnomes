@@ -103,8 +103,10 @@ def send_customer_confirmation(payload):
         <p>— Handyman Gnomes</p>
         """
 
+        FROM_EMAIL = os.getenv("RESEND_FROM", "Handyman Gnomes <sunstate@sunstatear.com>")
+
         resend.Emails.send({
-            "from": "Handyman Gnomes <onboarding@resend.dev>",
+            "from": FROM_EMAIL,
             "to": [email],
             "subject": subject,
             "html": html_content,
@@ -130,8 +132,10 @@ def send_customer_appointment_time(payload):
         <p>— Handyman Gnomes</p>
         """
 
+        FROM_EMAIL = os.getenv("RESEND_FROM", "Handyman Gnomes <sunstate@sunstatear.com>")
+
         resend.Emails.send({
-            "from": "Handyman Gnomes <onboarding@resend.dev>",
+            "from": FROM_EMAIL,
             "to": [email],
             "subject": f"Confirmed Appointment for Ticket {ticket}",
             "html": html_content,

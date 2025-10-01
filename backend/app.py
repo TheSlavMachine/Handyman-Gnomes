@@ -162,11 +162,16 @@ def appointment_action():
         if not ticket_id or not action or not selected_time:
             return jsonify({"error": "Missing ticket_id, action, or time"}), 400
 
+        # Pull the intake record for this ticket
+        log = models.IntakeLog.objects.filter(ticket_id=ticket_id).first()
+        if not log:
+            return jsonify({"error": "Unknown ticket_id"}), 404
+
         payload = {
             "ticket_id": ticket_id,
-            "name": "Customer Name",        
-            "email": "customer@example.com",  
-            "selected_time": selected_time
+            "name": log.name,
+            "email": log.email,
+            "selected_time": selected_time,
         }
 
         send_customer_appointment_time(payload)
