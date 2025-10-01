@@ -5,6 +5,7 @@ import html
 import json
 from dotenv import load_dotenv
 from urllib.parse import quote_plus
+from datetime import datetime
 
 load_dotenv()
 resend.api_key = os.environ.get("RESEND_API_KEY")
@@ -49,6 +50,16 @@ def send_handyman_email(payload):
 
         warranty_str = "Yes" if payload.get('isUnderWarranty') == 'yes' else "No"
 
+        # Format date as DD-MM-YYYY for display
+        raw_date = payload.get('appointmentDateString', '')
+        date_display = raw_date
+        try:
+            if raw_date:
+                parsed = datetime.fromisoformat(str(raw_date))
+                date_display = parsed.strftime('%d-%m-%Y')
+        except Exception:
+            pass
+
         subject = f"New Job Request: {ticket}"
         html_content = f"""
         <h1>New Job Request</h1>
@@ -59,7 +70,7 @@ def send_handyman_email(payload):
             <tr><td>Phone</td><td><a href="tel:{html.escape(payload.get('phone', ''))}">{html.escape(payload.get('phone', ''))}</a></td></tr>
             <tr><td>Email</td><td>{html.escape(email)}</td></tr>
             <tr><td>Address</td><td>{maps_link}</td></tr>
-            <tr><td>Date</td><td>{html.escape(payload.get('appointmentDateString', ''))}</td></tr>
+            <tr><td>Date</td><td>{html.escape(date_display)}</td></tr>
             <tr><td>Time Window</td><td>{html.escape(payload.get('timeWindow', ''))}</td></tr>
             <tr style="background-color: #f2f2f2;"><th colspan="2">Service Details</th></tr>
             <tr><td>Appliance(s)</td><td>{html.escape(appliances_str)}</td></tr>
@@ -100,10 +111,10 @@ def send_customer_confirmation(payload):
         <p>Thank you for submitting your service request!</p>
         <p>Your ticket ID is <strong>{html.escape(ticket_id)}</strong>.</p>
         <p>We will contact you soon to confirm your appointment details.</p>
-        <p>— Handyman Gnomes</p>
+        <p>— Sun State Appliance Repair Team</p>
         """
 
-        FROM_EMAIL = os.getenv("RESEND_FROM", "Handyman Gnomes <sunstate@sunstatear.com>")
+        FROM_EMAIL = os.getenv("RESEND_FROM", "Sun State Appliance Repair <sunstate@sunstatear.com>")
 
         resend.Emails.send({
             "from": FROM_EMAIL,
@@ -129,10 +140,10 @@ def send_customer_appointment_time(payload):
         <p>Your ticket ID is <strong>{ticket}</strong>.</p>
         <p>Your confirmed appointment time is:</p>
         <p><strong>{handyman_selected_time}</strong></p>
-        <p>— Handyman Gnomes</p>
+        <p>— Sun State Appliance Repair Team</p>
         """
 
-        FROM_EMAIL = os.getenv("RESEND_FROM", "Handyman Gnomes <sunstate@sunstatear.com>")
+        FROM_EMAIL = os.getenv("RESEND_FROM", "Sun State Appliance Repair <sunstate@sunstatear.com>")
 
         resend.Emails.send({
             "from": FROM_EMAIL,
