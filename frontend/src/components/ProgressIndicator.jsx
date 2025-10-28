@@ -7,8 +7,8 @@ function cn(...classes) {
 
 export default function ProgressIndicator({ steps, currentStep }) {
   return (
-    <nav aria-label="Progress">
-      <ol role="list" className="flex items-center">
+    <nav aria-label="Progress" className="w-full">
+      <ol role="list" className="flex flex-nowrap items-center gap-1 sm:gap-2 md:gap-4 w-full">
         {steps.map((stepName, index) => {
           const stepNumber = index + 1;
           const isCompleted = currentStep > stepNumber;
@@ -20,7 +20,7 @@ export default function ProgressIndicator({ steps, currentStep }) {
               {index < steps.length - 1 ? (
                 <div
                   className={cn(
-                    'absolute left-4 top-4 -ml-px h-0.5 w-full',
+                    'absolute left-3 top-3 md:left-4 md:top-4 -ml-px h-0.5 w-full',
                     isCompleted ? 'bg-primary' : 'bg-gray-300'
                   )}
                   aria-hidden="true"
@@ -33,7 +33,7 @@ export default function ProgressIndicator({ steps, currentStep }) {
                 <div className="bg-white px-2">
                   <span
                     className={cn(
-                      'flex h-8 w-8 items-center justify-center rounded-full border-2',
+                      'flex h-5 w-5 md:h-8 md:w-8 items-center justify-center rounded-full border-2',
                       isActive ? 'border-primary' : 'border-gray-300',
                       isCompleted ? 'border-primary bg-primary text-primary-foreground' : ''
                     )}
@@ -49,10 +49,10 @@ export default function ProgressIndicator({ steps, currentStep }) {
                 </div>
 
                 {/* Step Name - Also has a white background for masking */}
-                <div className="bg-white pr-4">
+                <div className="bg-white pr-1 sm:pr-4 hidden sm:block">
                    <span
                     className={cn(
-                      'text-sm font-medium',
+                      'text-xs md:text-sm font-medium',
                       isActive ? 'text-primary' : 'text-gray-500'
                     )}
                   >
