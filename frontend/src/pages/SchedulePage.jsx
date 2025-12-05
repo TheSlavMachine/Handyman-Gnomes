@@ -31,7 +31,7 @@ export const validationSchemas = {
     phone: z.string()
       .min(7, { message: "Please enter a valid phone number." })
       .regex(/^[0-9\s()+-]+$/, { message: "Phone number can only contain numbers." }),
-    address: z.string().min(5, { message: "Address is required." }),
+    address: z.string().min(10, { message: "Address is too short." }),
     notes: z.string().max(500, { message: "Notes cannot be longer than 500 characters." }).optional().or(z.literal('')),
   }),
 };
@@ -105,7 +105,7 @@ export default function SchedulePage() {
   const nextStep = () => setStep(prev => prev + 1);
   const prevStep = () => setStep(prev => prev - 1);
 
- const handleSubmit = async (validatedData) => {
+ const handleSubmit = async (validatedData = {}) => {
     setIsSubmitting(true);
     setSubmitError('');
     setSubmitSuccess(null);

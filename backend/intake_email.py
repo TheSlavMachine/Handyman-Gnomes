@@ -28,7 +28,8 @@ def send_handyman_email(payload):
             logger.error("No reply_to email provided for handyman email.")
             return
         reachout_url_base = f"{base_url}/api/appointment-action?ticket_id={ticket}&action=reachout&time="
-        time_window = payload.get('time_window', 'Morning') 
+        # Accept either camelCase or snake_case from the intake payload
+        time_window = payload.get('timeWindow') or payload.get('time_window') or 'Morning'
         available_slots = TIME_SLOTS.get(time_window, [])
 
         time_slots_html = ""
