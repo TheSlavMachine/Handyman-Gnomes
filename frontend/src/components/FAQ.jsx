@@ -13,9 +13,9 @@ function FAQ() {
         "No! Our initial consultation and diagnostic is completely free. We'll assess your appliance issue and provide an upfront estimate before starting any work."
     },
     {
-      question: "What's included in your warranty?",
+      question: "Do you guarantee your repairs?",
       answer:
-        "All repairs come with a comprehensive 2-year warranty on parts and labor. If the same issue occurs again, we'll fix it free of charge."
+        "Yes. If the same issue returns, let us know and we'll come back promptly to make it right."
     },
     {
       question: "Do you service all appliance brands?",
@@ -60,14 +60,14 @@ function FAQ() {
             >
               <button
                 onClick={() => toggle(index)}
-                className="w-full flex justify-between items-center p-4 text-left hover:bg-gray-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-inset"
+                className="w-full flex justify-between items-center p-4 text-left hover:bg-gray-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-inset"
               >
                 <span className="text-base font-semibold text-gray-900 pr-4">
                   {faq.question}
                 </span>
                 <div className="flex-shrink-0">
-                  <div className={`w-7 h-7 rounded-full border-2 border-orange-600 flex items-center justify-center transition-transform duration-200 ${openIndex === index ? 'rotate-180 bg-orange-600' : 'bg-white'}`}>
-                    <span className={`text-sm font-bold transition-colors duration-200 ${openIndex === index ? 'text-white' : 'text-orange-600'}`}>
+                  <div className={`w-7 h-7 rounded-full border-2 border-amber-600 flex items-center justify-center transition-transform duration-200 ${openIndex === index ? 'rotate-180 bg-amber-600' : 'bg-white'}`}>
+                    <span className={`text-sm font-bold transition-colors duration-200 ${openIndex === index ? 'text-white' : 'text-amber-600'}`}>
                       {openIndex === index ? '−' : '+'}
                     </span>
                   </div>
@@ -93,7 +93,7 @@ function FAQ() {
             </p>
             <a
               href="tel:+14804579660"
-              className="inline-flex items-center bg-orange-600 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-orange-700 transform hover:scale-105 transition-all duration-200 font-semibold"
+              className="inline-flex items-center bg-amber-500 text-slate-900 px-6 py-3 rounded-lg shadow-lg hover:bg-amber-400 transform hover:scale-105 transition-all duration-200 font-semibold"
             >
               <span className="mr-2">📞</span>
               Call (480) 457-9660

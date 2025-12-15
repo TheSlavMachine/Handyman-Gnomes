@@ -2,7 +2,7 @@ function TestimonialCard({ name, text, location, rating }) {
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
       <div className="flex items-center mb-4">
-        <div className="flex text-orange-400 text-lg">
+        <div className="flex text-amber-400 text-lg">
           {[...Array(rating)].map((_, i) => (
             <span key={i}>⭐</span>
           ))}
@@ -12,7 +12,7 @@ function TestimonialCard({ name, text, location, rating }) {
         "{text}"
       </blockquote>
       <div className="flex items-center">
-        <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold text-lg mr-3">
+        <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 font-bold text-lg mr-3">
           {name.charAt(0)}
         </div>
         <div>
@@ -40,7 +40,7 @@ function Testimonials() {
     },
     { 
       name: "Jennifer Chen", 
-      text: "Excellent work on our dishwasher repair. The technician was knowledgeable and provided a 2-year warranty. Great peace of mind!", 
+      text: "Excellent work on our dishwasher repair. The technician was knowledgeable, double-checked everything, and the pricing was clear. Great peace of mind!", 
       location: "Tempe, AZ",
       rating: 5
     },
@@ -71,8 +71,8 @@ function Testimonials() {
         </div>
 
         <div className="text-center mt-12">
-          <div className="inline-flex items-center bg-orange-50 rounded-lg px-6 py-4 border border-orange-200">
-            <div className="flex items-center text-orange-600 mr-4">
+          <div className="inline-flex items-center bg-amber-50 rounded-lg px-6 py-4 border border-amber-200">
+            <div className="flex items-center text-amber-600 mr-4">
               <span className="text-2xl mr-2">⭐</span>
               <span className="text-xl font-bold">4.9/5</span>
             </div>

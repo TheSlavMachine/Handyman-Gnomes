@@ -18,9 +18,9 @@ function FitBounds({ geoData }) {
 
 function Location() {
   const geoJsonStyle = {
-    color: 'red',
-    fillColor: 'orange',
-    fillOpacity: 0.5,
+    color: '#d97706',
+    fillColor: '#fbbf24',
+    fillOpacity: 0.45,
     weight: 2,
   };
 
@@ -57,7 +57,7 @@ function Location() {
           <div className="lg:w-1/3">
             <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 h-full">
               <div className="text-center mb-4">
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-orange-100 rounded-full mb-3">
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-amber-100 rounded-full mb-3">
                   <span className="text-xl">📍</span>
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-1">Cities We Service</h3>
@@ -66,8 +66,8 @@ function Location() {
               
               <div className="grid grid-cols-1 gap-2">
                 {["Phoenix", "Scottsdale", "Tempe", "Mesa", "Chandler", "Gilbert"].map((city, index) => (
-                  <div key={city} className="flex items-center p-2 bg-gray-50 rounded-lg hover:bg-orange-50 transition-colors duration-200">
-                    <div className="w-6 h-6 bg-orange-600 text-white rounded-full flex items-center justify-center text-xs font-semibold mr-3">
+                  <div key={city} className="flex items-center p-2 bg-gray-50 rounded-lg hover:bg-amber-50 transition-colors duration-200">
+                    <div className="w-6 h-6 bg-amber-500 text-white rounded-full flex items-center justify-center text-xs font-semibold mr-3">
                       {index + 1}
                     </div>
                     <span className="text-gray-800 font-medium text-sm">{city}</span>
@@ -78,8 +78,8 @@ function Location() {
                 ))}
               </div>
 
-              <div className="mt-4 p-3 bg-orange-50 rounded-lg border border-orange-200">
-                <p className="text-xs text-orange-800 text-center">
+              <div className="mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200">
+                <p className="text-xs text-amber-800 text-center">
                   <strong>Same-day service</strong> available
                 </p>
               </div>
@@ -96,7 +96,7 @@ function Location() {
             </p>
             <a
               href="tel:+14804579660"
-              className="inline-flex items-center bg-orange-600 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-orange-700 transform hover:scale-105 transition-all duration-200 font-semibold"
+              className="inline-flex items-center bg-amber-500 text-slate-900 px-6 py-3 rounded-lg shadow-lg hover:bg-amber-400 transform hover:scale-105 transition-all duration-200 font-semibold"
             >
               <span className="mr-2">📞</span>
               Call (480) 457-9660

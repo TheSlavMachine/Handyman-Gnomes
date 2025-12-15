@@ -35,7 +35,7 @@ export default function Appliances() {
   return (
     <section className="flex flex-col items-center py-10 px-4 bg-gray-50">
       <h2 className="text-4xl font-bold text-center">
-        We fix <span className="text-orange-600">all</span> appliances and brands
+        We fix <span className="text-amber-600">all</span> appliances and brands
       </h2>
       <p className="text-lg mt-2 mb-6 text-gray-600">
         Ovens, cooktops, microwaves, refrigerators, dishwashers, washers and dryers; We handle it all.
@@ -45,8 +45,8 @@ export default function Appliances() {
         {/* Oven */}
         <div className="bg-white shadow-md rounded-lg p-6 max-w-sm hover:shadow-lg transition-shadow duration-300">
           <img src="https://media.istockphoto.com/id/174952194/photo/appetizing-pork-joint-dinner-in-the-oven-for-thanksgiving-day.jpg?s=612x612&w=0&k=20&c=wGDcV1pKTdBIxLIo0fugg63-TgRWG0nurjgwVTl8aeY=" alt="Oven" className="w-full h-40 object-cover rounded-md mb-4" />
-          <h3 className="text-xl font-semibold mb-2">Kitchen Appliances</h3>
-          <div className="flex justify-center my-2">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-xl font-semibold">Kitchen Appliances</h3>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Oven-Gen--Streamline-Outlined-Material" 
             height={SIZE} width={SIZE}>
               <desc>
@@ -63,8 +63,8 @@ export default function Appliances() {
         {/* Fridge */}
         <div className="bg-white shadow-md rounded-lg p-6 max-w-sm hover:shadow-lg transition-shadow duration-300">
           <img src="https://www.kitchenaid.com/is/image/content/dam/business-unit/kitchenaid/en-us/marketing-content/site-assets/page-content/pinch-of-help/types-of-refrigerators/Types_of_Refrigerators_IMG_14_M.jpg?fmt=png-alpha&qlt=85,0&resMode=sharp2&op_usm=1.75,0.3,2,0&scl=1&constrain=fit,1" alt="Refrigerator" className="w-full h-40 object-cover rounded-md mb-4" />
-          <h3 className="text-xl font-semibold mb-2">Refrigerator Repair</h3>
-          <div className="flex justify-center my-2">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-xl font-semibold">Refrigerator Repair</h3>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Kitchen--Streamline-Rounded-Material" 
             height={SIZE} width={SIZE}>
               <desc>

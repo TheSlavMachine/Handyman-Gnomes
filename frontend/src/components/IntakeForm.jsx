@@ -384,7 +384,7 @@ export default function IntakeForm() {
                   )
                 })}
               </div>
-              <p className="text-xs text-gray-600 mt-2">Your handyman will email you with an exact arrival time after you submit your request.</p>
+              <p className="text-xs text-gray-600 mt-2">Your technician will email you with an exact arrival time after you submit your request.</p>
             </section>
           </div>
         )}
