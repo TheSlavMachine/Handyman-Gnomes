@@ -90,13 +90,13 @@ export default function ScheduleRequest() {
           })}
         </div>
         <p className="text-xs text-gray-600 mt-2">
-          Your handyman will email you with an exact arrival time after you submit your request.
+          Your technician will email you with an exact arrival time after you submit your request.
         </p>
       </section>
 
       {/* Notes + contact */}
       <section className="space-y-2">
-        <label className="text-sm font-medium">Notes for the handyman</label>
+        <label className="text-sm font-medium">Notes for the technician</label>
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
@@ -123,9 +123,21 @@ export default function ScheduleRequest() {
 
       {/* Sticky summary */}
       <div className="sticky bottom-0 bg-white/95 backdrop-blur border-t p-3 flex items-center justify-between">
-        <div className="text-sm">
-          <span className="text-gray-600">Selected:</span>{" "}
-          <strong>{selectedDate || "—"}</strong> {timePref ? `• ${timePref}` : ""}
+        <div className="text-sm space-y-1">
+          <div>
+            <span className="text-gray-600">Selected:</span>{" "}
+            <strong>{selectedDate || "—"}</strong> {timePref ? `• ${timePref}` : ""}
+          </div>
+          <div className="text-xs text-gray-600">
+            By requesting, you agree to our{" "}
+            <a
+              href="/Documents/DOC-20251007-WA0002.docx"
+              className="underline text-blue-700 hover:text-blue-900"
+            >
+              Terms &amp; Conditions
+            </a>
+            .
+          </div>
         </div>
         <div className="flex gap-2">
           <button className="px-4 py-2 rounded-lg border">Back</button>
