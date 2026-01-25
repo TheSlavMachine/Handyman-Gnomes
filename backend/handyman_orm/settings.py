@@ -6,12 +6,18 @@ INSTALLED_APPS = [
 
 import os
 from pathlib import Path
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent
 
+DATABASE_URL = os.getenv("DATABASE_URL")
 DATABASE_TYPE = os.getenv("DJANGO_DB", "sqlite")
 
-if DATABASE_TYPE == "postgres":
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+    }
+elif DATABASE_TYPE == "postgres":
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',

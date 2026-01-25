@@ -4,16 +4,22 @@ import json
 import uuid
 import requests
 import re # 1. Import the regular expression module
+from datetime import date as _date
+
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "handyman_orm.settings")
 django.setup()
 
 from django.utils import timezone
-from intake_email import send_handyman_email, send_customer_confirmation, send_customer_appointment_time
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from core import models
+from intake_email import (
+    send_handyman_email,
+    send_customer_confirmation,
+    send_customer_appointment_time,
+)
 
 app = Flask(__name__)
 CORS(app)
@@ -26,23 +32,44 @@ with open(APPLIANCES_FILE, "r") as f:
 
 @app.route('/api/intake', methods=['POST'])
 def intake_request():
-    data = request.json
+    data = request.json or {}
     
-    zip_pattern = re.compile(r'^\d{5}$')
     phone_pattern = re.compile(r'^[0-9\s()+-]+$') 
     name_pattern = re.compile(r"^[a-zA-Z\s'-]+$")
-
-    if not zip_pattern.match(data.get('zipCode', '')):
-        return jsonify({"error": "Invalid ZIP code format"}), 400
-    if not name_pattern.match(data.get('name', '')):
-        return jsonify({"error": "Name contains invalid characters"}), 400
-    if not phone_pattern.match(data.get('phone', '')):
-        return jsonify({"error": "Invalid phone number format"}), 400
+    # Validate fields using compiled patterns and additional constraints (make brand/zip optional)
+    if not name_pattern.match((data.get('name') or '').strip()):
+        return jsonify({"error": "Invalid name"}), 400
+    phone_raw = data.get('phone', '')
+    # Require valid phone characters and at least 7 digits
+    if not phone_pattern.match(phone_raw) or len(re.sub(r"\D", "", phone_raw)) < 7:
+        return jsonify({"error": "Invalid phone number"}), 400
+    email = data.get('email', '')
+    if not email or '@' not in email:
+        return jsonify({"error": "A valid email is required"}), 400
+    if len(data.get('address', '')) < 10:
+        return jsonify({"error": "Address is too short"}), 400
+    if not data.get('problem'):
+        return jsonify({"error": "Problem is a required field"}), 400
     if len(data.get('notes', '')) > 500:
         return jsonify({"error": "Notes cannot exceed 500 characters"}), 400
 
-    appointment_date = data.get("appointmentDateString") 
-    slot = data.get("timeWindow")
+    # Support both camelCase and snake_case from clients
+    appointment_date = data.get("appointmentDateString") or data.get("appointment_date")
+    slot = data.get("timeWindow") or data.get("time_window")
+
+    # Normalize/validate appointment_date
+    if isinstance(appointment_date, str) and appointment_date:
+        try:
+            appointment_date = _date.fromisoformat(appointment_date)
+        except ValueError:
+            return jsonify({"error": "Invalid appointment_date format (use YYYY-MM-DD)"}), 400
+    if not appointment_date:
+        return jsonify({"error": "appointment_date is required"}), 400
+
+    # Coerce slot to allowed choices
+    allowed_slots = [choice[0] for choice in models.IntakeLog.TWIN_CHOICES]
+    if not slot or slot not in allowed_slots:
+        slot = allowed_slots[0]
     if appointment_date and slot:
         existing_count = models.IntakeLog.objects.filter(
             appointment_date=appointment_date,
@@ -53,8 +80,11 @@ def intake_request():
     
     ticket_id = uuid.uuid4().hex
 
+    
+
     try:
-        appliance_names = data.get('appliances', [])
+
+        appliance_names = data.get('appliances') or ([data.get('appliance')] if data.get('appliance') else [])
         appliance_objs = []
         for name in appliance_names:
             appliance, _ = models.Appliance.objects.get_or_create(name=name)
@@ -62,24 +92,33 @@ def intake_request():
 
         intake_log = models.IntakeLog.objects.create(
             ticket_id=ticket_id,
-            brand=data.get('brand'),
+            brand=data.get('brand') or 'Unknown',
             under_warranty=data.get('isUnderWarranty') == 'yes',
             problem=data.get('problem'),
+            problem_other=data.get('problem_other', ''),
             name=data.get('name'),
             phone=data.get('phone'),
             address=data.get('address'),
             email=data.get('email'),
             time_window=slot,
             appointment_date=appointment_date,
-            serial_number=data.get('serialNumber', ''),
+            serial_number=data.get('serialNumber') or data.get('serial_number', ''),
+            description=data.get('description', ''),
             notes=data.get('notes', ''),
             status="NEW",
         )
 
         if appliance_objs:
             intake_log.appliances.set(appliance_objs)
-  
-        email_payload = {**data, "ticket_id": ticket_id}
+
+        # Ensure downstream emails have both key styles present
+        email_payload = {
+            **data,
+            "ticket_id": ticket_id,
+            "appointmentDateString": str(appointment_date),
+            "timeWindow": slot,
+            "time_window": slot,
+        }
         send_handyman_email(email_payload)
         send_customer_confirmation(email_payload)
 
@@ -91,11 +130,7 @@ def intake_request():
     
 @app.route("/api/appliances", methods=["GET"])
 def get_appliances():
-    appliances_no_problems = [
-        {k: v for k, v in appliance.items() if k != "problems"}
-        for appliance in APPLIANCES
-    ]
-    return jsonify(appliances_no_problems)
+    return jsonify(APPLIANCES)
 
 @app.route("/api/problems", methods=["GET"])
 def get_appliance_problems():
@@ -127,11 +162,16 @@ def appointment_action():
         if not ticket_id or not action or not selected_time:
             return jsonify({"error": "Missing ticket_id, action, or time"}), 400
 
+        # Pull the intake record for this ticket
+        log = models.IntakeLog.objects.filter(ticket_id=ticket_id).first()
+        if not log:
+            return jsonify({"error": "Unknown ticket_id"}), 404
+
         payload = {
             "ticket_id": ticket_id,
-            "name": "Customer Name",        
-            "email": "customer@example.com",  
-            "selected_time": selected_time
+            "name": log.name,
+            "email": log.email,
+            "selected_time": selected_time,
         }
 
         send_customer_appointment_time(payload)

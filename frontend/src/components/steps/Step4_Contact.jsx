@@ -38,7 +38,7 @@ export default function Step4_Contact({ formData, setFormData, prevStep, handleS
     }
 
     setErrors({});
-    handleSubmit();
+    handleSubmit(); 
   };
 
   const isSubmitDisabled = !formData.name || !formData.phone || !formData.address || !agreedToTerms || isSubmitting;

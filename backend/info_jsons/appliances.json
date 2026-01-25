@@ -1,27 +1,35 @@
+
 [
   {
+    "name": "Oven",
+    "icon": "Oven",
+    "title": "Kitchen Appliances",
+    "description": "We service and repair ovens, cooktops, and microwaves.",
+    "image": "https://media.istockphoto.com/id/174952194/photo/appetizing-pork-joint-dinner-in-the-oven-for-thanksgiving-day.jpg?s=612x612&w=0&k=20&c=wGDcV1pKTdBIxLIo0fugg63-TgRWG0nurjgwVTl8aeY=",
+    "problems": [{ "name": "Not heating" }, { "name": "Temperature inaccurate" },{ "name": "Door won't close" }]
+  },
+  {
+    "name": "Refrigerator",
+    "icon": "Fridge",
+    "title": "Refrigerator Repair",
+    "description": "Refrigerator not running? Get it cooling again in no time.",
+    "image": "https://www.kitchenaid.com/is/image/content/dam/business-unit/kitchenaid/en-us/marketing-content/site-assets/page-content/pinch-of-help/types-of-refrigerators/Types_of_Refrigerators_IMG_14_M.jpg?fmt=png-alpha",
+    "problems": [{ "name": "Not cooling" }, { "name": "Leaking water" },{ "name": "Making noise" }]
+  },
+  {
     "name": "Dishwasher",
-    "problems": [
-      { "name": "Not draining" },
-      { "name": "Leaking water" },
-      { "name": "Not cleaning dishes" }
-    ]
+    "icon": "Dishwasher",
+    "title": "Dishwasher Repair",
+    "description": "Save time spent washing dishes, service your dishwasher today.",
+    "image": "https://d2xjmi1k71iy2m.cloudfront.net/dairyfarm/id/pageImages/page__en_us_1725352754557__0.jpeg",
+    "problems": [{ "name": "Not draining" }, { "name": "Not cleaning dishes" },{ "name": "Leaking water" }]
   },
   {
-    "name": "Dryer",
-    "problems": [
-      { "name": "Not heating" },
-      { "name": "Drum not spinning" },
-      { "name": "Making noise" }
-    ]
-  },
-  {
-    "name": "Cooktop",
-    "problems": [
-      { "name": "Igniter not clicking" },
-      { "name": "Burner not lighting" },
-      { "name": "Temperature issues" }
-    ]
+    "name": "Washer / Dryer",
+    "icon": "WasherDryer",
+    "title": "Washer/Dryer Repair",
+    "description": "Comprehensive repair for washers and dryers.",
+    "image": "https://linqcdn.avbportal.com/images/f473d7cd-1927-4f80-b625-2906aa94ebcf.jpg?w=640",
+    "problems": [{ "name": "Drum not spinning" }, { "name": "Not draining" },{ "name": "Making noise" }]
   }
 ]
-

@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from 'date-fns';
+import { useEffect } from 'react';
 
 function cn(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -15,12 +16,34 @@ const TIME_SLOTS = [
 
 export default function Step3_Scheduler({ formData, setFormData, nextStep, prevStep }) {
   const handleDateSelect = (date) => {
+    if (!date || Number.isNaN(date.getTime())) return;
     setFormData(prev => ({ 
       ...prev, 
       appointmentDate: date,
       appointmentDateString: format(date, 'yyyy-MM-dd') 
     }));
   };
+
+  useEffect(() => {
+    if (!formData.appointmentDate) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      for (let i = 0; i < 60; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() + i);
+        if (!(d < new Date(new Date().setDate(new Date().getDate() - 1)))) {
+          setFormData(prev => ({
+            ...prev,
+            appointmentDate: d,
+            appointmentDateString: format(d, 'yyyy-MM-dd'),
+          }));
+          break;
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleTimeSelect = (timeWindow) => {
     setFormData(prev => ({ ...prev, timeWindow }));
@@ -41,6 +64,7 @@ export default function Step3_Scheduler({ formData, setFormData, nextStep, prevS
             mode="single"
             selected={formData.appointmentDate}
             onSelect={handleDateSelect}
+            required
             disabled={(date) => date < new Date(new Date().setDate(new Date().getDate() - 1))}
             className="rounded-md border p-2 w-full" 
           />

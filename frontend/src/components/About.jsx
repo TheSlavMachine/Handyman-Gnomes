@@ -1,27 +1,26 @@
 function About() {
   return (
-    <section id="about" className="py-16 px-10 bg-lightgray">
+    <section id="about" className="py-12 px-6 md:px-10 bg-gray-50">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-start md:items-center gap-12">
         
         {/* Left side text */}
         <div className="md:w-1/2 text-left">
-          <h2 className="text-4xl font-bold mb-6">About Us</h2>
-          <p className="text-lg sm:text-xl mb-4">
-            Sun State works in the greater Phoenix Valley area, providing reliable and affordable home appliance repair services.
+          <h2 className="text-4xl font-bold mb-6 text-slate-900">About Us</h2>
+          <p className="text-lg sm:text-xl mb-4 text-gray-700">
+            Sun State serves the greater Phoenix Valley with reliable, affordable appliance repair. We are locally owned, licensed, and insured.
           </p>
-          <p className="text-lg sm:text-xl mb-4">
-            Our experienced technicians handle a wide variety of appliances including ovens, refrigerators, dishwashers, laundry machines and more.
-            If something isn't working, don't wait to get it running. Give us a call and get it fixed today!
+          <p className="text-lg sm:text-xl mb-4 text-gray-700">
+            Our experienced technicians handle ovens, refrigerators, dishwashers, laundry machines, and more. If something isn't working, schedule a visit and we’ll get it running again.
           </p>
-          <p className="text-lg sm:text-xl">
-            Customer satisfaction is our top priority — fast, friendly, and professional service every time.
+          <p className="text-lg sm:text-xl text-gray-700">
+            Customer satisfaction is our priority—clear communication, respectful service, and clean work on every job.
           </p>
         </div>
 
         {/* Right side brands box */}
-        <div className="md:w-1/2 bg-white p-6 rounded shadow-md">
-          <h3 className="text-2xl font-semibold mb-4 text-center">We cover brands including:</h3>
-          <ul className="grid grid-rows-3 grid-cols-[repeat(auto-fit,minmax(80px,1fr))] gap-4">
+        <div className="md:w-1/2 bg-white p-6 rounded-xl shadow-md border border-gray-100">
+          <h3 className="text-2xl font-semibold mb-4 text-center text-slate-900">Brands we service</h3>
+          <ul className="grid grid-cols-3 md:grid-cols-4 gap-4">
             <li>
               <div className="w-full h-12 overflow-hidden">
                 <img src="https://cdn.worldvectorlogo.com/logos/samsung-8.svg" alt="Samsung logo" className="object-contain object-center w-full h-full" />

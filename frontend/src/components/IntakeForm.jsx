@@ -5,6 +5,7 @@ function classNames(...values) {
 }
 
 export default function IntakeForm() {
+  const API_BASE = import.meta.env.VITE_API_BASE || '/api'
   const [step, setStep] = useState(0)
   const [appliances, setAppliances] = useState([])
   const [problemsMap, setProblemsMap] = useState({})
@@ -30,8 +31,8 @@ export default function IntakeForm() {
     async function bootstrap() {
       try {
         const [appliancesRes, timeRes] = await Promise.all([
-          fetch('/api/appliances'),
-          fetch('/api/time-windows'),
+          fetch(`${API_BASE}/appliances`),
+          fetch(`${API_BASE}/time-windows`),
         ])
         const appliancesJson = await appliancesRes.json()
         const timeJson = await timeRes.json()
@@ -50,7 +51,7 @@ export default function IntakeForm() {
       const map = {}
       for (const ap of selectedAppliances) {
         try {
-          const res = await fetch(`/api/problems?appliance=${encodeURIComponent(ap)}`)
+          const res = await fetch(`${API_BASE}/problems?appliance=${encodeURIComponent(ap)}`)
           const json = await res.json()
           map[ap] = json
         } catch (e) {
@@ -214,14 +215,15 @@ export default function IntakeForm() {
 
     try {
       setSubmitting(true)
-      const res = await fetch('/api/intake', {
+      const res = await fetch(`${API_BASE}/intake`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
-      const json = await res.json()
-      if (!res.ok) throw new Error(json.error || 'Submission failed')
-      setResult(json)
+      const contentType = res.headers.get('content-type') || ''
+      const body = contentType.includes('application/json') ? await res.json() : await res.text()
+      if (!res.ok) throw new Error(typeof body === 'string' ? body : (body.error || 'Submission failed'))
+      setResult(typeof body === 'string' ? { message: body } : body)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -382,7 +384,7 @@ export default function IntakeForm() {
                   )
                 })}
               </div>
-              <p className="text-xs text-gray-600 mt-2">Your handyman will email you with an exact arrival time after you submit your request.</p>
+              <p className="text-xs text-gray-600 mt-2">Your technician will email you with an exact arrival time after you submit your request.</p>
             </section>
           </div>
         )}
