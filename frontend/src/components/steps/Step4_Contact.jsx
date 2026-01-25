@@ -36,12 +36,12 @@ export default function Step4_Contact({ formData, setFormData, prevStep, handleS
       setErrors(fieldErrors);
       return;
     }
-    
+
     setErrors({});
-    handleSubmit(); 
+    handleSubmit();
   };
 
-   const isSubmitDisabled = !formData.name || !formData.phone || !formData.address || !agreedToTerms || isSubmitting;
+  const isSubmitDisabled = !formData.name || !formData.phone || !formData.address || !agreedToTerms || isSubmitting;
 
   return (
     <form onSubmit={handleFinalSubmit}>
@@ -78,7 +78,7 @@ export default function Step4_Contact({ formData, setFormData, prevStep, handleS
             {errors.notes && <p className="text-sm font-medium text-destructive">{errors.notes[0]}</p>}
           </div>
         </div>
-        
+
         <div className="row-start-1 md:col-start-2">
           <Card className="h-full flex flex-col">
             <CardHeader><CardTitle>Review Your Request</CardTitle></CardHeader>
@@ -100,20 +100,19 @@ export default function Step4_Contact({ formData, setFormData, prevStep, handleS
           </Card>
         </div>
       </div>
-      
+
       <div className="flex items-center space-x-2 pt-6">
         <Checkbox id="terms" checked={agreedToTerms} onCheckedChange={setAgreedToTerms} />
         <div className="grid gap-1.5 leading-none">
           <label htmlFor="terms" className="text-sm font-medium leading-none">
-            I agree to the <Link to="/terms" target="_blank" className="underline text-primary hover:text-primary/80"> Terms & Services</Link>.
+            I agree to the <a href="/path/to/TermsAndServices.docx" download className="underline text-primary hover:text-primary/80"> Terms & Services</a>.
           </label>
           <p className="text-sm text-muted-foreground">You agree to our policies regarding service fees and cancellations.</p>
         </div>
       </div>
 
-
       {submitError && <p className="text-sm font-medium text-destructive mt-4 text-center">{submitError}</p>}
-      
+
       <div className="flex justify-between pt-8 border-t mt-6">
         <Button variant="outline" type="button" onClick={prevStep}>Back</Button>
 
