@@ -105,7 +105,7 @@ export default function Step4_Contact({ formData, setFormData, prevStep, handleS
         <Checkbox id="terms" checked={agreedToTerms} onCheckedChange={setAgreedToTerms} />
         <div className="grid gap-1.5 leading-none">
           <label htmlFor="terms" className="text-sm font-medium leading-none">
-            I agree to the <a href="/TermsAndServices.docx" target="_blank" rel="noopener" className="underline text-primary hover:text-primary/80"> Terms & Services</a>.
+            I agree to the <a href="/TermsAndServices.pdf" target="_blank" rel="noopener" className="underline text-primary hover:text-primary/80"> Terms & Services</a>.
           </label>
           <p className="text-sm text-muted-foreground">You agree to our policies regarding service fees and cancellations.</p>
         </div>
