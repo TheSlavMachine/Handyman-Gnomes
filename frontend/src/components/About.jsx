@@ -63,7 +63,7 @@ function About() {
             </li>
             <li>
               <div className="w-full h-12 overflow-hidden">
-                <img src="https://www.vikingrange.com/consumer/html/images/logo_viking.gif" alt="Viking logo" className="object-contain object-center w-full h-full" />
+                <img src="/VikingLogo.png" alt="Viking logo" className="object-contain object-center w-full h-full" />
               </div>
             </li>
             <li>

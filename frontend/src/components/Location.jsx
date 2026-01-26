@@ -80,7 +80,7 @@ function Location() {
 
               <div className="mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200">
                 <p className="text-xs text-amber-800 text-center">
-                  <strong>Same-day service</strong> available
+                  <strong>Same-day service available</strong>
                 </p>
               </div>
             </div>
