@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 HANDYMAN_EMAIL = os.environ.get("HANDYMAN_EMAIL", "xamorris@proton.me")
 base_url = os.getenv("PUBLIC_APP_URL", "http://127.0.0.1:5000")
-
+FROM_EMAIL = os.getenv("RESEND_FROM", "Sun State Appliance Repair <sunstate@sunstatear.com>")
 TIME_SLOTS_FILE = "info_jsons/time_slots.json"
 
 with open(TIME_SLOTS_FILE, "r") as f:
@@ -88,7 +88,7 @@ def send_handyman_email(payload):
         """
 
         resend.Emails.send({
-            "from": "Handyman Gnomes <onboarding@resend.dev>",
+            "from": FROM_EMAIL,
             "to": [HANDYMAN_EMAIL],
             "subject": subject,
             "html": html_content,
@@ -115,8 +115,6 @@ def send_customer_confirmation(payload):
         <p>— Sun State Appliance Repair Team</p>
         """
 
-        FROM_EMAIL = os.getenv("RESEND_FROM", "Sun State Appliance Repair <sunstate@sunstatear.com>")
-
         resend.Emails.send({
             "from": FROM_EMAIL,
             "to": [email],
@@ -125,6 +123,7 @@ def send_customer_confirmation(payload):
         })
     except Exception as e:
         logger.error(f"Failed to send customer email: {e}")
+
 def send_customer_appointment_time(payload):
     try:
         email = payload.get('email')
@@ -143,8 +142,6 @@ def send_customer_appointment_time(payload):
         <p><strong>{handyman_selected_time}</strong></p>
         <p>— Sun State Appliance Repair Team</p>
         """
-
-        FROM_EMAIL = os.getenv("RESEND_FROM", "Sun State Appliance Repair <sunstate@sunstatear.com>")
 
         resend.Emails.send({
             "from": FROM_EMAIL,
