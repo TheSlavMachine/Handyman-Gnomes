@@ -23,9 +23,12 @@
 /frontend/yarn-error.log*
 
 # Backend (Python)
-/backend/__pycache__/
-/backend/*.pyc
+__pycache__/
+*.py[cod]
 /backend/venv/
 /backend/.venv/
 /backend/.env
 /backend/instance/
+
+# Local editor settings
+/.vscode/

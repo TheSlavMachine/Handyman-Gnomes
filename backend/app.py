@@ -10,14 +10,11 @@ from datetime import date as _date
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "handyman_orm.settings")
 django.setup()
 
-from django.utils import timezone
-
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from core import models
+from core.services import SlotFullError, create_intake_log
 from intake_email import (
-    send_handyman_email,
-    send_customer_confirmation,
     send_customer_appointment_time,
 )
 
@@ -70,59 +67,20 @@ def intake_request():
     allowed_slots = [choice[0] for choice in models.IntakeLog.TWIN_CHOICES]
     if not slot or slot not in allowed_slots:
         slot = allowed_slots[0]
-    if appointment_date and slot:
-        existing_count = models.IntakeLog.objects.filter(
-            appointment_date=appointment_date,
-            time_window=slot
-        ).count()
-        if slot in ["Morning", "Afternoon"] and existing_count >= 5:
-            return jsonify({"error": f"{slot} slots are full for {appointment_date}"}), 400
     
     ticket_id = uuid.uuid4().hex
 
-    
-
     try:
-
-        appliance_names = data.get('appliances') or ([data.get('appliance')] if data.get('appliance') else [])
-        appliance_objs = []
-        for name in appliance_names:
-            appliance, _ = models.Appliance.objects.get_or_create(name=name)
-            appliance_objs.append(appliance)
-
-        intake_log = models.IntakeLog.objects.create(
+        create_intake_log(
+            data=data,
             ticket_id=ticket_id,
-            brand=data.get('brand') or 'Unknown',
-            under_warranty=data.get('isUnderWarranty') == 'yes',
-            problem=data.get('problem'),
-            problem_other=data.get('problem_other', ''),
-            name=data.get('name'),
-            phone=data.get('phone'),
-            address=data.get('address'),
-            email=data.get('email'),
-            time_window=slot,
             appointment_date=appointment_date,
-            serial_number=data.get('serialNumber') or data.get('serial_number', ''),
-            description=data.get('description', ''),
-            notes=data.get('notes', ''),
-            status="NEW",
+            slot=slot,
         )
 
-        if appliance_objs:
-            intake_log.appliances.set(appliance_objs)
-
-        # Ensure downstream emails have both key styles present
-        email_payload = {
-            **data,
-            "ticket_id": ticket_id,
-            "appointmentDateString": str(appointment_date),
-            "timeWindow": slot,
-            "time_window": slot,
-        }
-        send_handyman_email(email_payload)
-        send_customer_confirmation(email_payload)
-
         return jsonify({"message": "Job scheduled successfully", "ticket_id": ticket_id}), 201
+    except SlotFullError as exc:
+        return jsonify({"error": str(exc)}), 400
     except Exception as e:
         print(f"Intake submission failed: {e}")
         return jsonify({"error": "Internal server error"}), 500
