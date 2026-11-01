@@ -5,6 +5,7 @@
 
 # General
 .DS_Store
+.env
 
 # Frontend (Create React App)
 /frontend/node_modules
