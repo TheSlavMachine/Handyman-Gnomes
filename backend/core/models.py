@@ -2,6 +2,14 @@
 
 from django.db import models
 
+TIME_WINDOW_CHOICES = [
+    ("Morning", "Morning"),
+    ("Afternoon", "Afternoon"),
+]
+
+DEFAULT_SLOT_CAPACITY = 5
+
+
 # 1. We re-introduce this model to hold our list of appliances.
 class Appliance(models.Model):
     name = models.CharField(max_length=64, unique=True)
@@ -9,11 +17,9 @@ class Appliance(models.Model):
     def __str__(self):
         return self.name
 
+
 class IntakeLog(models.Model):
-    TWIN_CHOICES = [
-        ("Morning", "Morning"),
-        ("Afternoon", "Afternoon"),
-    ]
+    TWIN_CHOICES = TIME_WINDOW_CHOICES
 
     ticket_id = models.CharField(max_length=36, unique=True, db_index=True)
 
@@ -40,3 +46,24 @@ class IntakeLog(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+
+class AppointmentSlot(models.Model):
+    appointment_date = models.DateField()
+    time_window = models.CharField(max_length=16, choices=TIME_WINDOW_CHOICES)
+    capacity = models.PositiveSmallIntegerField(default=DEFAULT_SLOT_CAPACITY)
+    booked_count = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["appointment_date", "time_window"],
+                name="unique_appointment_slot",
+            ),
+        ]
+
+    def __str__(self):
+        return (
+            f"{self.appointment_date} {self.time_window} "
+            f"({self.booked_count}/{self.capacity})"
+        )

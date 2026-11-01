@@ -6,14 +6,23 @@ INSTALLED_APPS = [
 
 import os
 from pathlib import Path
-import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 DATABASE_TYPE = os.getenv("DJANGO_DB", "sqlite")
 
+dj_database_url = None
+
 if DATABASE_URL:
+    try:
+        import dj_database_url
+    except ImportError:
+        raise ImportError("dj_database_url is required when DATABASE_URL is set.")
+
+if DATABASE_URL:
+    if dj_database_url is None:
+        raise ImportError("dj_database_url is required when DATABASE_URL is set.")
     DATABASES = {
         'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
     }
@@ -33,5 +42,8 @@ else:
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / "db.sqlite3",
+            'OPTIONS': {
+                'timeout': 20,
+            },
         }
     }
